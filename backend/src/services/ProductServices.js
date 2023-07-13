@@ -1,9 +1,25 @@
 import productModel from "../models/MongoDB/productModel.js";
 import {faker} from "@faker-js/faker"
 
-export const findProducts = async () => {
+export const findProducts = async (params) => {
     try {
         const products = await productModel.find()
+/*
+        let {limit,page,sort,category}=params
+        if (category){
+            if (sort==="1"||sort==="-1"){
+                return await productModel.paginate({category},{sort:{price:parseInt(sort)},limit:limit||10,page:page||1})
+            }else{
+                return await productModel.paginate({category},{limit:limit||10,page:page||1})
+            }
+        }else{
+            if (sort==="1"||sort==="-1"){
+                return await productModel.paginate({},{sort:{price:parseInt(sort)},limit:limit||10,page:page||1})
+            }else{
+                return await productModel.paginate({},{limit:limit||10,page:page||1})
+            }
+        }
+*/
         return products
     } catch (error) {
         throw new Error(error)
@@ -41,30 +57,6 @@ export const createMockingProducts = async () => {
 
 }
 
-
-/*
-export const findProducts = async (params) => {
-
-    try {
-        let {limit,page,sort,category}=params
-        if (category){
-            if (sort==="1"||sort==="-1"){
-                return await productModel.paginate({category},{sort:{price:parseInt(sort)},limit:limit||10,page:page||1})
-            }else{
-                return await productModel.paginate({category},{limit:limit||10,page:page||1})
-            }
-        }else{
-            if (sort==="1"||sort==="-1"){
-                return await productModel.paginate({},{sort:{price:parseInt(sort)},limit:limit||10,page:page||1})
-            }else{
-                return await productModel.paginate({},{limit:limit||10,page:page||1})
-            }
-        }
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-*/
 
 export const findProductById = async (id) => {
     try {
@@ -112,11 +104,12 @@ export const modifyProduct = async (idProduct, product) => {
     try {
 
         if (!title||!description||!code||!price||!stock||!category){
-            return "Campos invalidos"
+            return "Alguno de los campos requeridos es invalido. Fijese si ingreso todos los datos"
         }
     
         const productExists= await findProductByCode(code)
-
+        //console.log(productExists.id)
+        //console.log(idProduct)
         if (productExists&&productExists.id!=idProduct){
             return "Error. Esta intentando utilizar un codigo ya utilizado por otro producto"
         }else{

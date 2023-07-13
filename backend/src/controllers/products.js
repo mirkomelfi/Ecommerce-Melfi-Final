@@ -176,7 +176,7 @@ export const autenticateRolAdmin = async (req, res, next) => {
 
 export const getProducts = async (req, res) => {
     try {
-        const products = await findProducts()
+        const products = await findProducts(req.params)
 
         if (products.length!==0){
             res.status(200).send(products) 

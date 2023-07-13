@@ -128,45 +128,48 @@ export const createNewPassword= async (req,res) => {
 export const registerUser = async (req, res) => {
     try {
         const { first_name, last_name, rol, email, age, password } = req.body
-        
-        let newUser={}
-        const userBDD = await findUserByEmail(email)
+        if (first_name&&last_name&&email&&age&&password){
 
-        if (userBDD) {
-            res.status(401).send("Usuario ya registrado")
-        } else {
-            const hashPassword = createHash(password)
+            let newUser={}
+            const userBDD = await findUserByEmail(email)
 
-            if (!rol||rol=="User"){
-                const newCart= await createCart({products:[]})
-                const idCartUser=newCart.id
-                newUser = await createUser({ 
-                    first_name:first_name, 
-                    last_name:last_name, 
-                    rol: rol,
-                    email:email,
-                    age:age,
-                    password: hashPassword,
-                    idCart:idCartUser
-                })
-            }else{
+            if (userBDD) {
+                res.status(401).send("Usuario ya registrado")
+            } else {
+                const hashPassword = createHash(password)
 
-                newUser = await createUser({ 
-                    first_name:first_name, 
-                    last_name:last_name, 
-                    rol: rol,
-                    email:email,
-                    age:age,
-                    password: hashPassword
-                })
+                if (!rol||rol=="User"){
+                    const newCart= await createCart({products:[]})
+                    const idCartUser=newCart.id
+                    newUser = await createUser({ 
+                        first_name:first_name, 
+                        last_name:last_name, 
+                        rol: rol,
+                        email:email,
+                        age:age,
+                        password: hashPassword,
+                        idCart:idCartUser
+                    })
+                }else{
+
+                    newUser = await createUser({ 
+                        first_name:first_name, 
+                        last_name:last_name, 
+                        rol: rol,
+                        email:email,
+                        age:age,
+                        password: hashPassword
+                    })
+                }
+
+                const token = jwt.sign({ user: { id: newUser._id } }, process.env.JWT_SECRET);
+                res.cookie('jwt', token, { httpOnly: true });
+                res.status(201).json({ token });
             }
 
-            const token = jwt.sign({ user: { id: newUser._id } }, process.env.JWT_SECRET);
-            res.cookie('jwt', token, { httpOnly: true });
-            res.status(201).json({ token });
+        }else{
+            res.status(500).send(`Falta ingresar algun dato requerido`)
         }
-
-
     } catch (error) {
         res.status(500).send(`Ocurrio un error en Registro User, ${error}`)
     }

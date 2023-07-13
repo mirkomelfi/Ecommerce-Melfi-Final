@@ -8,6 +8,6 @@ routerSession.post("/login", loginUser)
 routerSession.get("/current", current)
 routerSession.post("/passwordRecovery", passwordRecovery)
 routerSession.post("/newPass", createNewPassword)
-
+//crear loggout
 
 export default routerSession

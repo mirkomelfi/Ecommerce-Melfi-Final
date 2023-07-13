@@ -1,14 +1,15 @@
 import { Router } from "express";
-import { emptyCart, finalizarCompra, getCartById,getCarts, removeProductCart } from "../controllers/cart.js";
-
+import { emptyCart, finalizarCompra, getCartById,getCarts, removeProductCart,addProductCart } from "../controllers/cart.js";
+import { autenticateRolUsr } from "../controllers/products.js";
 
 const routerCart = Router()
 
 routerCart.get("/", getCarts)
 routerCart.get("/:cid",getCartById)
-routerCart.get("/:cid/purchase", finalizarCompra) 
-routerCart.delete("/:cid/product/:pid",removeProductCart)
-routerCart.delete("/:cid",emptyCart)
+routerCart.post("/add", autenticateRolUsr, addProductCart) // cambiar logica
+routerCart.get("/:cid/purchase", finalizarCompra) // cambiar logica
+routerCart.delete("/:cid/product/:pid",removeProductCart)// cambiar logica
+routerCart.delete("/:cid",emptyCart)// cambiar logica
 
 /*
 
