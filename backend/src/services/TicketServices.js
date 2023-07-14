@@ -38,7 +38,7 @@ export const createTicket = async (cart,email) => {
         }
 
         const newTicket = await ticketModel(ticket)
-
+        
         await newTicket.save()
         return newTicket
 

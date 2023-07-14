@@ -1,4 +1,4 @@
-import { createUser, findUserByEmail, isTokenExpired, modifyUser,currentUser } from "../services/UserServices.js";
+import { createUser, findUserByEmail, isTokenExpired, modifyUser,currentUser, modifyConnection } from "../services/UserServices.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import nodemailer from 'nodemailer'
@@ -33,6 +33,9 @@ export const loginUser = async (req, res, next) => {
                 // Ya que el usuario es valido, genero un nuevo token
                 const token = jwt.sign({ user: { id: userBDD._id } }, process.env.JWT_SECRET)
                 res.cookie('jwt', token, { httpOnly: true })
+        
+                await modifyConnection(userBDD.id,Date())
+
                 return res.status(200).json({ token })
             } else {
                 //El token existe, asi que lo valido
@@ -44,7 +47,7 @@ export const loginUser = async (req, res, next) => {
                     } else {
                         // Token valido
                         req.user = user
-                        return res.status(200).send("Creedenciales validas")
+                        return res.status(200).send("Credenciales validas")
 
                     }
                 })
@@ -163,6 +166,10 @@ export const registerUser = async (req, res) => {
                 }
 
                 const token = jwt.sign({ user: { id: newUser._id } }, process.env.JWT_SECRET);
+                const userBDDLogged = await findUserByEmail(newUser.email)
+
+                await modifyConnection(userBDDLogged.id,Date())
+
                 res.cookie('jwt', token, { httpOnly: true });
                 res.status(201).json({ token });
             }
@@ -180,8 +187,22 @@ export const registerUser = async (req, res) => {
 export const current = async(req,res) =>{
     try{
         const user= await currentUser(req)
-
+        
         if(user) return res.send({status:"success",payload:user})
+    }catch (error) {
+        res.status(500).send(`Ocurrio un error en Current, ${error}`)
+    }
+
+}
+
+export const logoutUser = async(req,res) =>{
+    try{
+
+        const user= await currentUser(req)
+        await modifyConnection(user.id,Date())
+
+        res.clearCookie("jwt")
+        res.status(200).send(`Sesion cerrada`)
     }catch (error) {
         res.status(500).send(`Ocurrio un error en Current, ${error}`)
     }

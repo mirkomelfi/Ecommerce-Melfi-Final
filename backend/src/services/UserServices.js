@@ -53,6 +53,17 @@ export const modifyUser = async (id, password) => {
 
 }
 
+export const modifyConnection = async (id, connection) => {
+    try {
+
+        const user = await userModel.findByIdAndUpdate(id, {last_connection:connection})
+        return user
+
+    } catch (error) {
+        throw new Error(error)
+    }
+
+}
 
 export const isTokenExpired = (passwordData) => {
     try {
@@ -74,6 +85,20 @@ export const currentUser = async (req) => {
         }else{
             return -1
         }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const deleteUser = async (req) => {
+    try {
+        
+        const user = 1 // gettear el user
+        const elapsedTime = Date.now()-last_connection.now()
+        const expirationTime= 172800000 // 2 dias
+
+        return elapsedTime>=expirationTime
+        
     } catch (error) {
         throw new Error(error)
     }

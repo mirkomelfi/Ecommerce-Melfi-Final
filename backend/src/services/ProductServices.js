@@ -61,7 +61,11 @@ export const createMockingProducts = async () => {
 export const findProductById = async (id) => {
     try {
         const product = await productModel.findById(id)
-        return product
+        console.log(product)
+        if (product){
+            return product
+        } 
+        return -1
     } catch (error) {
         throw new Error(error)
     }

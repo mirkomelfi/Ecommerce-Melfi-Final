@@ -47,7 +47,7 @@ export const checkStock = async (idCart) => {
                     finalCart.products.push(productCart) // cart con productos finales
                 }
                 else{
-                    cartNoStock.push(productCart) // array con productos excluidos
+                    cartNoStock.push(productCart) // array de productos excluidos
                 }
             }
 
@@ -64,52 +64,90 @@ export const checkStock = async (idCart) => {
     }
 }
 
-export const addProductToCart = async (idCart,idProduct,quantity) => { 
+export const addProductToCart = async (idCart,productsExistentes,idProduct,quantity) => { 
 // falta: si no ingresa alguno de los 3 parametros ERROR!!
     try {
-        const cart= await cartModel.findById(idCart)
-        const arrayProductos= cart.products
 
-        if (arrayProductos.some(producto=>producto.productId==idProduct)){
-            const productWanted= arrayProductos.find(prod=>prod.productId==idProduct)
-            productWanted.quantity=productWanted.quantity+parseInt(quantity)
-        }else{
-            arrayProductos.push({productId:idProduct,quantity:quantity}) // checkear
-        }
+        let productToAdd=undefined
+        productsExistentes.forEach(product=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            if  (idProduct==product.id){
+                productToAdd=idProduct
+            }
+        })
 
-        cart.products=arrayProductos
-        const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
-        return cartUpdated
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-export const addProductToCartTESTSer = async (idCart,idProduct) => { 
-    // falta: si ya habia ingresado aqui y vuelve a tocar este boton!!
-    try {
-        const cart= await cartModel.findById(idCart)
-        const arrayProductos= cart.products
-        if (arrayProductos.some(producto=>producto.productId==idProduct)){
-            return -1
-        }else{
-            arrayProductos.push({productId:idProduct,quantity:1})     
+        if (productToAdd){
+
+            const cart= await cartModel.findById(idCart)
+            const arrayProductos= cart.products
+
+            if (arrayProductos.some(producto=>producto.productId==idProduct)){
+                const productWanted= arrayProductos.find(prod=>prod.productId==idProduct)
+                productWanted.quantity=parseInt(quantity)
+            }else{
+                arrayProductos.push({productId:idProduct,quantity:quantity}) // checkear
+            }
+
             cart.products=arrayProductos
             const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
             return cartUpdated
+        } else{
+            return -1
+        }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+export const addProductToCartTESTSer = async (idCart,productsExistentes,idProduct) => { 
+    // falta: si ya habia ingresado aqui y vuelve a tocar este boton!!
+    try {
+        let productToAdd=undefined
+        productsExistentes.forEach(product=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            if  (idProduct==product.id){
+                productToAdd=idProduct
+            }
+        })
+
+        if (productToAdd){
+            const cart= await cartModel.findById(idCart)
+            const arrayProductos= cart.products
+            if (arrayProductos.some(producto=>producto.productId==idProduct)){
+                const productWanted= arrayProductos.find(prod=>prod.productId==idProduct)
+                productWanted.quantity++
+            }else{
+                arrayProductos.push({productId:idProduct,quantity:1})    
+            } 
+            cart.products=arrayProductos
+            const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
+            return cartUpdated
+        }else{
+            return -1
         }
     } catch (error) {
         throw new Error(error)
     }
 }
 
-export const updateProductsCartSER = async (idCart, newCart) => { 
-    // falta: si ya habia ingresado aqui y vuelve a tocar este boton!!
+export const updateProductsCartSER = async (idCart, productsExistentes, newCart) => { 
+    
     try {
+
+        const productsToChange=[]
+        newCart.forEach(productCart=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            productsExistentes.forEach(product=>{
+               if  (productCart.productId==product.id){
+                productsToChange.push(productCart) 
+               }
+            })
+        })
+
         const cart= await cartModel.findById(idCart)
-        const arrayProductos= cart.products
-        cart.products=newCart
-        const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
-        return cartUpdated
+        if (productsToChange.length!=0){
+            cart.products=productsToChange
+            const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
+            return cartUpdated
+        }else{
+            return -1
+        }
     } catch (error) {
         throw new Error(error)
     }

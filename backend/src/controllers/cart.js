@@ -1,4 +1,5 @@
 import { addProductToCart,checkStock,deleteElementsCart,deleteProductCart,findCartById,findCarts,addProductToCartTESTSer, updateProductsCartSER } from "../services/CartServices.js"
+import { findProductById, findProducts } from "../services/ProductServices.js"
 import { createTicket } from "../services/TicketServices.js"
 import { currentUser, findUserById, findUsers } from "../services/UserServices.js"
 
@@ -34,13 +35,24 @@ export const addProductCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
         const user = await currentUser(req)
+        const products= await findProducts()
 
         const {pid}= req.params
         const {quantity}= req.body
-        const cart = await addProductToCart(user.idCart,pid,quantity)
+
+        const cart = await addProductToCart(user.idCart,products,pid,quantity)
+
+        if (cart!=-1){
+            
         res.status(200).json({
             message: "Carrito actualizado",
         })
+        }else{
+            res.status(400).json({
+                message: "El ID del producto ingresado no existe",
+            })
+        }
+
 
     } catch (error) {
         res.status(500).send(error)
@@ -51,17 +63,17 @@ export const addProductCart = async (req, res) => {
 export const addProductCartTESTCont = async (req, res) => {
     try {
         //idCart,idProduct,quantity
-        const user = await currentUser(req)
-
         const {pid}= req.params
-        const cart = await addProductToCartTESTSer(user.idCart,pid)
-        if (cart==-1){
-            res.status(400).json({
-                message: "El producto ya fue agregado al menos una vez al carrito. Si desea agregar mas cantidad, seleccione la cantidad y el boton actualizar",
-            })
-        }else{
+        const products= await findProducts()
+        const user = await currentUser(req)
+        const cart = await addProductToCartTESTSer(user.idCart,products,pid)
+        if (cart!=-1){
             res.status(200).json({
                 message: "Producto agregado al carrito",
+            })
+        }else{
+            res.status(400).json({
+                message: "El ID del producto ingresado no existe",
             })
         }
 
@@ -75,11 +87,12 @@ export const updateProductsCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
         const user = await currentUser(req)
-        const products=req.body
-        const cart = await updateProductsCartSER(user.idCart,products)
+        const products= await findProducts()
+        const newCart=req.body
+        const cart = await updateProductsCartSER(user.idCart,products,newCart)
         if (cart==-1){
             res.status(400).json({
-                message: " -1",
+                message: "No se realizaron cambios en el carrito. Fijese si los ID ingresados son validos",
             })
         }else{
             res.status(200).json({
