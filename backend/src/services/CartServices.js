@@ -4,6 +4,8 @@ import CustomError from "./errors/CustomError.js";
 import EErrors from "./errors/enums.js";
 import { generateAddProductErrorInfo } from "./errors/info.js";
 
+
+
 export const findCarts = async () => {
     try {
         const carts = await cartModel.find()
@@ -68,24 +70,6 @@ export const addProductToCart = async (idCart,idProduct,quantity) => {
         const cart= await cartModel.findById(idCart)
         const arrayProductos= cart.products
 
-        /*
-        const productsBDD= await productModel.find()
-        const prod= productsBDD.find(product=>product.id==idProduct)
-
-        if(prod){
-            if(prod.stock<parseInt(quantity)){
-                CustomError.createError({
-                    name:"Add Product to Cart error",
-                    cause:generateAddProductErrorInfo ({stock, quantity}),
-                    message:"Error Trying to Add Product to Cart",
-                    code:EErrors.INVALID_STOCK
-                })
-            }   
-        }
-        */
-
-
-
         if (arrayProductos.some(producto=>producto.productId==idProduct)){
             const productWanted= arrayProductos.find(prod=>prod.productId==idProduct)
             productWanted.quantity=productWanted.quantity+parseInt(quantity)
@@ -100,6 +84,37 @@ export const addProductToCart = async (idCart,idProduct,quantity) => {
         throw new Error(error)
     }
 }
+export const addProductToCartTESTSer = async (idCart,idProduct) => { 
+    // falta: si ya habia ingresado aqui y vuelve a tocar este boton!!
+    try {
+        const cart= await cartModel.findById(idCart)
+        const arrayProductos= cart.products
+        if (arrayProductos.some(producto=>producto.productId==idProduct)){
+            return -1
+        }else{
+            arrayProductos.push({productId:idProduct,quantity:1})     
+            cart.products=arrayProductos
+            const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
+            return cartUpdated
+        }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const updateProductsCartSER = async (idCart, newCart) => { 
+    // falta: si ya habia ingresado aqui y vuelve a tocar este boton!!
+    try {
+        const cart= await cartModel.findById(idCart)
+        const arrayProductos= cart.products
+        cart.products=newCart
+        const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
+        return cartUpdated
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+    
 
 export const deleteProductCart = async  (idCart,idProduct) => {
     

@@ -1,4 +1,4 @@
-import { createUser, findUserByEmail, isTokenExpired, modifyUser } from "../services/UserServices.js";
+import { createUser, findUserByEmail, isTokenExpired, modifyUser,currentUser } from "../services/UserServices.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import nodemailer from 'nodemailer'
@@ -179,8 +179,8 @@ export const registerUser = async (req, res) => {
 
 export const current = async(req,res) =>{
     try{
-        const cookie = req.cookies['jwt']
-        const user = jwt.verify(cookie,process.env.JWT_SECRET);
+        const user= await currentUser(req)
+
         if(user) return res.send({status:"success",payload:user})
     }catch (error) {
         res.status(500).send(`Ocurrio un error en Current, ${error}`)

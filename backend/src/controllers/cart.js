@@ -1,9 +1,11 @@
-import { addProductToCart,checkStock,deleteElementsCart,deleteProductCart,findCartById,findCarts } from "../services/CartServices.js"
+import { addProductToCart,checkStock,deleteElementsCart,deleteProductCart,findCartById,findCarts,addProductToCartTESTSer, updateProductsCartSER } from "../services/CartServices.js"
 import { createTicket } from "../services/TicketServices.js"
-import { findUserById, findUsers } from "../services/UserServices.js"
+import { currentUser, findUserById, findUsers } from "../services/UserServices.js"
+
 
 export const getCarts = async (req, res) => {
     try {
+        
         const carts = await findCarts()
         req.logger.debug("Encuentra los carts OK")
         res.status(200).send(carts)
@@ -31,8 +33,11 @@ export const getCartById = async (req, res) => {
 export const addProductCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
-        const {idCart,idProduct,quantity}= req.body
-        const cart = await addProductToCart(idCart,idProduct,quantity)
+        const user = await currentUser(req)
+
+        const {pid}= req.params
+        const {quantity}= req.body
+        const cart = await addProductToCart(user.idCart,pid,quantity)
         res.status(200).json({
             message: "Carrito actualizado",
         })
@@ -43,19 +48,64 @@ export const addProductCart = async (req, res) => {
 
 }
 
-export const finalizarCompra = async (req, res) => {
-    const {cid}=req.params 
+export const addProductCartTESTCont = async (req, res) => {
     try {
-        const [cartFinal,cartCancelado] = await checkStock(cid)
+        //idCart,idProduct,quantity
+        const user = await currentUser(req)
+
+        const {pid}= req.params
+        const cart = await addProductToCartTESTSer(user.idCart,pid)
+        if (cart==-1){
+            res.status(400).json({
+                message: "El producto ya fue agregado al menos una vez al carrito. Si desea agregar mas cantidad, seleccione la cantidad y el boton actualizar",
+            })
+        }else{
+            res.status(200).json({
+                message: "Producto agregado al carrito",
+            })
+        }
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+
+}
+
+export const updateProductsCart = async (req, res) => {
+    try {
+        //idCart,idProduct,quantity
+        const user = await currentUser(req)
+        const products=req.body
+        const cart = await updateProductsCartSER(user.idCart,products)
+        if (cart==-1){
+            res.status(400).json({
+                message: " -1",
+            })
+        }else{
+            res.status(200).json({
+                message: "Carrito actualizado",
+            })
+        }
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+
+}
+
+
+
+export const finalizarCompra = async (req, res) => {
+    const user = await currentUser(req)
+    try {
+        const [cartFinal,cartCancelado] = await checkStock(user.idCart)
 
         if (cartFinal.products.length!==0){
-            const users= await findUsers()
-            const user=users.find(user=>user.idCart==cartFinal.id)
-            const userEmail=user.email
-    
-            const ticket= await createTicket(cartFinal,userEmail)
-    
-            await deleteElementsCart(cid)
+
+            const ticket= await createTicket(cartFinal,user.email)
+
+
+            await deleteElementsCart(user.idCart)
 
             if (cartCancelado.length!==0){
                 res.status(200).json({
@@ -86,9 +136,9 @@ export const finalizarCompra = async (req, res) => {
 
 export const removeProductCart = async (req, res) => {
     try {
-
-        const {cid,pid}= req.params
-        const cart = await deleteProductCart(cid,pid)
+        const user = await currentUser(req)
+        const {pid}= req.params
+        const cart = await deleteProductCart(user.idCart,pid)
 
         if (cart){
             res.status(200).json({
@@ -109,8 +159,8 @@ export const removeProductCart = async (req, res) => {
 
 export const emptyCart = async (req, res) => {
     try {
-        const {cid}= req.params
-        const cart = await deleteElementsCart(cid)
+        const user = await currentUser(req)
+        const cart = await deleteElementsCart(user.idCart)
         if (cart){
             res.status(200).json({
                 message: "Carrito vaciado correctamente",

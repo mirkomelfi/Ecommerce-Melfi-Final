@@ -1,4 +1,5 @@
 import userModel from "../models/MongoDB/userModel.js";
+import jwt from "jsonwebtoken";
 
 export const findUsers = async () => {
 
@@ -58,6 +59,21 @@ export const isTokenExpired = (passwordData) => {
         const elapsedTime = Date.now()-passwordData.timeStamp
         const expirationTime= 60*60*1000
         return elapsedTime>=expirationTime
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
+export const currentUser = async (req) => {
+    try {
+        const cookie = req.cookies['jwt']
+        const user = jwt.verify(cookie,process.env.JWT_SECRET);
+        if (user){
+            return await userModel.findById(user.user.id)
+        }else{
+            return -1
+        }
     } catch (error) {
         throw new Error(error)
     }
