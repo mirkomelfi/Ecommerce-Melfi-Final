@@ -63,37 +63,42 @@ export const passwordRecovery= async (req,res) => {   // en cada ruta a la que i
     try {
 
         const { email } = req.body
+        const validEmail= await findUserByEmail(email)
+        if (validEmail){
 
-        let transporter = nodemailer.createTransport({ //Genero la forma de enviar info desde mail (o sea, desde Gmail con x cuenta)
-            host: 'smtp.gmail.com', //Defino que voy a utilizar un servicio de Gmail
-            port: 465,
-            secure: true,
-            tls: {
-                rejectUnauthorized: false
-            },
-            auth: {
-                user: "mirkomelfi123@gmail.com", //Mail del que se envia informacion
-                pass: "qpeokphyvruqpkrz",
-                authMethod: 'LOGIN'
-            }
-        
-        })
+            let transporter = nodemailer.createTransport({ //Genero la forma de enviar info desde mail (o sea, desde Gmail con x cuenta)
+                host: 'smtp.gmail.com', //Defino que voy a utilizar un servicio de Gmail
+                port: 465,
+                secure: true,
+                tls: {
+                    rejectUnauthorized: false
+                },
+                auth: {
+                    user: "mirkomelfi123@gmail.com", //Mail del que se envia informacion
+                    pass: "qpeokphyvruqpkrz",
+                    authMethod: 'LOGIN'
+                }
+            
+            })
 
-        let url= "http://localhost:4000/auth/newPass"
+            let url= "http://localhost:4000/auth/newPass"
 
-        await transporter.sendMail({
-            from: 'Test Coder mirkomelfi123@gmail.com',
-            to: email,
-            subject: "Mail de recuperacion de contraseña",
-            html: `
-                <div>
-                    <h2> ${url} </h2>
-                </div>
-            `,
-            attachments: []
-        })
-        res.cookie("cookie cookie","cookie password",{maxAge:60*60*1000,signed:true})
-        res.send("Email enviado")
+            await transporter.sendMail({
+                from: 'Test Coder mirkomelfi123@gmail.com',
+                to: email,
+                subject: "Mail de recuperacion de contraseña",
+                html: `
+                    <div>
+                        <h2> ${url} </h2>
+                    </div>
+                `,
+                attachments: []
+            })
+            res.cookie("cookie cookie","cookie password",{maxAge:60*60*1000,signed:true})
+            res.send("Email enviado")
+        }else{
+            res.send("Email no existe en bdd")
+        }
         
     } catch (error) {
         throw new Error(error)

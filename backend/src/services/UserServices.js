@@ -65,6 +65,17 @@ export const modifyConnection = async (id, connection) => {
 
 }
 
+export const deleteUser = async (id) => {
+    try {
+        const user = await userModel.findByIdAndDelete(id)
+        return user
+
+    } catch (error) {
+        throw new Error(error)
+    }
+
+}
+
 export const isTokenExpired = (passwordData) => {
     try {
         const elapsedTime = Date.now()-passwordData.timeStamp
@@ -90,15 +101,26 @@ export const currentUser = async (req) => {
     }
 }
 
-export const deleteUser = async (req) => {
+export const deleteUsers = async (users) => { 
     try {
+        const expirationTime= 172800000// 2 dias
+        const deletedUsers=[]
         
-        const user = 1 // gettear el user
-        const elapsedTime = Date.now()-last_connection.now()
-        const expirationTime= 172800000 // 2 dias
+        users.forEach(user=>{
+            const elapsedTime = Date.now()-user.last_connection.now()
+            if (user.rol!="Admin"||user.rol!="admin"){
+                if (elapsedTime>=expirationTime){
+                    deletedUsers.push(user)
+                }
+            }
+        })
 
-        return elapsedTime>=expirationTime
+        for (const user of deletedUsers) {
+            await deleteUser(user.id)
+        }
         
+        return deletedUsers        
+
     } catch (error) {
         throw new Error(error)
     }

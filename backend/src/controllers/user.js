@@ -1,4 +1,4 @@
-import { findUsers, createUser } from "../services/UserServices.js";
+import { findUsers, createUser, deleteUsers } from "../services/UserServices.js";
 
 export const getUsers = async (req, res) => {
     try {
@@ -9,6 +9,26 @@ export const getUsers = async (req, res) => {
         res.status(500).send(error)
     }
 }
+
+export const deleteInactiveUsers = async (req, res) => {
+    try {
+        const users = await findUsers()
+        const deletedUsers= deleteUsers(users)
+        if (deletedUsers.length!=0){
+            res.status(200).send({
+                message: "Usuarios eliminados"
+            })
+        }else{
+            res.status(400).send({
+                message: "No hay usuarios para eliminar"
+            })
+        }
+
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
 
 
 
