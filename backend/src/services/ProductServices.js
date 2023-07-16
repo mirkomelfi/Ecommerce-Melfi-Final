@@ -3,8 +3,8 @@ import {faker} from "@faker-js/faker"
 
 export const findProducts = async (params) => {
     try {
-        const products = await productModel.find()
-/*
+        //const products = await productModel.find()
+
         let {limit,page,sort,category}=params
         if (category){
             if (sort==="1"||sort==="-1"){
@@ -19,8 +19,8 @@ export const findProducts = async (params) => {
                 return await productModel.paginate({},{limit:limit||10,page:page||1})
             }
         }
-*/
-        return products
+
+        //return products
     } catch (error) {
         throw new Error(error)
     }
