@@ -193,7 +193,11 @@ export const current = async(req,res) =>{
     try{
         const user= await currentUser(req)
         
-        if(user) return res.send({status:"success",payload:user})
+        if(user!=-1) {
+            return res.send({status:"success",payload:user})
+        }else{
+            res.status(400).send(`No esta loggeado`)
+        }
     }catch (error) {
         res.status(500).send(`Ocurrio un error en Current, ${error}`)
     }
@@ -204,10 +208,14 @@ export const logoutUser = async(req,res) =>{
     try{
 
         const user= await currentUser(req)
-        await modifyConnection(user.id,Date())
+        if (user!=-1){
+            await modifyConnection(user.id,Date())
 
-        res.clearCookie("jwt")
-        res.status(200).send(`Sesion cerrada`)
+            res.clearCookie("jwt")
+            res.status(200).send(`Sesion cerrada`)
+        }else{
+            res.status(400).send(`No esta loggeado`)
+        }
     }catch (error) {
         res.status(500).send(`Ocurrio un error en Current, ${error}`)
     }

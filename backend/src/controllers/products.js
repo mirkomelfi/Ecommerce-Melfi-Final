@@ -61,9 +61,11 @@ export const addProduct = async (req,res) => {
 export const updateProduct = async (req, res) => {
     const { id } = req.params
     const product = req.body
-
+    
     try {
-        const newProduct = await modifyProduct(id, product)
+        const products= await findProducts()
+
+        const newProduct = await modifyProduct(id, product, products)
 
         if (typeof newProduct==='object') {
             return res.status(200).json({
@@ -92,15 +94,20 @@ export const deleteProduct = async (req, res) => {
     }
 
     try {
-        const product = await removeProduct(id)
-        if (product) {
+
+        const products= await findProducts()
+
+        const product = await removeProduct(id,products)
+        
+        if (product!=-1) {
             return res.status(200).json({
                 message: "Producto eliminado"
             })
+        }else{
+            res.status(200).json({
+                message: "Producto no encontrado"
+            })
         }
-        res.status(200).json({
-            message: "Producto no encontrado"
-        })
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -194,7 +201,7 @@ export const getProductById = async (req, res) => {
     const {id}=req.params
     try {
         const product = await findProductById(id)
-        if (product){
+        if (product!=-1){
             if (!product.title||!product.description||!product.code||!product.price||!product.status||!product.stock||!product.category||!product.thumbnails){
                 req.logger.warning(`Faltan propiedades del producto: ${product}`)
             }

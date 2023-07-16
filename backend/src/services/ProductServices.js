@@ -61,7 +61,7 @@ export const createMockingProducts = async () => {
 export const findProductById = async (id) => {
     try {
         const product = await productModel.findById(id)
-        console.log(product)
+        
         if (product){
             return product
         } 
@@ -101,31 +101,42 @@ export const createProduct = async (product) => {
 }
 
 
-export const modifyProduct = async (idProduct, product) => {
+export const modifyProduct = async (idProduct, product,productsExistentes) => {
     const id  = idProduct
     const { title,description,code,price,status,stock,category,thumbnails } = product
-
+    
     try {
 
-        if (!title||!description||!code||!price||!stock||!category){
-            return "Alguno de los campos requeridos es invalido. Fijese si ingreso todos los datos"
-        }
-    
-        const productExists= await findProductByCode(code)
-        //console.log(productExists.id)
-        //console.log(idProduct)
-        if (productExists&&productExists.id!=idProduct){
-            return "Error. Esta intentando utilizar un codigo ya utilizado por otro producto"
-        }else{
-            const product = await productModel.findByIdAndUpdate(id, {title,description,code,price,status,stock,category,thumbnails})
-            if (product) {
-                return product
-            }else{
-                return "Producto no encontrado"
+        let productToAdd=undefined
+        productsExistentes.forEach(product=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            if  (idProduct==product.id){
+                productToAdd=idProduct
             }
+        })  
+
+        if (productToAdd){
+
+            if (!title||!description||!code||!price||!stock||!category){
+                return "Alguno de los campos requeridos es invalido. Fijese si ingreso todos los datos"
+            }
+        
+            const productExists= await findProductByCode(code)
+            //console.log(productExists.id)
+            //console.log(idProduct)
+            if (productExists&&productExists.id!=idProduct){
+                return "Error. Esta intentando utilizar un codigo ya utilizado por otro producto"
+            }else{
+                const product = await productModel.findByIdAndUpdate(id, {title,description,code,price,status,stock,category,thumbnails})
+                if (product) {
+                    return product
+                }else{
+                    return "Producto no encontrado"
+                }
+            }
+
+        }else{
+            return "Producto no existente"
         }
-
-
     } catch (error) {
         throw new Error(error)
     }
@@ -133,12 +144,24 @@ export const modifyProduct = async (idProduct, product) => {
 }
 
 
-export const removeProduct = async (idProduct) => {
+export const removeProduct = async (idProduct,productsExistentes) => {
     try {
-        const product = await productModel.findByIdAndDelete(idProduct)
-        if (product) {
-            return product
+
+        let productToAdd=undefined
+        productsExistentes.forEach(product=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            if  (idProduct==product.id){
+                productToAdd=idProduct
+            }
+        })  
+        
+        if (productToAdd){
+
+            const product = await productModel.findByIdAndDelete(idProduct)
+            if (product) {
+                return product
+            }
         }
+
         return -1
     } catch (error) {
         throw new Error(error)

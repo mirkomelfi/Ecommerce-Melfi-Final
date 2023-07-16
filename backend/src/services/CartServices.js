@@ -9,15 +9,22 @@ import { generateAddProductErrorInfo } from "./errors/info.js";
 export const findCarts = async () => {
     try {
         const carts = await cartModel.find()
+        if (!carts){
+            return -1
+        }
         return carts
     } catch (error) {
         throw new Error(error)
     }
 }
 
+
 export const findCartById = async (id) => {
     try {
         const cart = await cartModel.findById(id)  //.populate("products.Products") checkear el populate
+        if (!cart){
+            return -1
+        }
         return cart
     } catch (error) {
         throw new Error(error)
@@ -154,21 +161,30 @@ export const updateProductsCartSER = async (idCart, productsExistentes, newCart)
 }
     
 
-export const deleteProductCart = async  (idCart,idProduct) => {
+export const deleteProductCart = async  (idCart,productsExistentes,idProduct) => {
     
     try{
-        const cart= await cartModel.findById(idCart)
 
-        if (cart){
-            const arrayProductos= cart.products
-            if (arrayProductos.some(producto=>producto.productId==idProduct)){
-                const arrayUpdated=arrayProductos.filter(producto=>producto.productId!=idProduct)
-                cart.products=arrayUpdated
-                const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
-                return cartUpdated
+        let productToAdd=undefined
+        productsExistentes.forEach(product=>{ // checkeo que el id que ingresa exista en mi listado de productos
+            if  (idProduct==product.id){
+                productToAdd=idProduct
+            }
+        })
+
+        if (productToAdd){
+            const cart= await cartModel.findById(idCart)
+
+            if (cart){
+                const arrayProductos= cart.products
+                if (arrayProductos.some(producto=>producto.productId==idProduct)){
+                    const arrayUpdated=arrayProductos.filter(producto=>producto.productId!=idProduct)
+                    cart.products=arrayUpdated
+                    const cartUpdated= await cartModel.findByIdAndUpdate(idCart,cart)
+                    return cartUpdated
+                }
             }
         }
-
         return -1
     }catch (error){
         throw new Error(error)

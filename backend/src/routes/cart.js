@@ -1,23 +1,21 @@
 import { Router } from "express";
-import { emptyCart, finalizarCompra, getCartById,getCarts, removeProductCart,addProductCart, addProductCartTESTCont, updateProductsCart } from "../controllers/cart.js";
+import { emptyCart, finalizarCompra, getCartById,getCarts,getCart, removeProductCart,addProductCart, addProductCartTESTCont, updateProductsCart } from "../controllers/cart.js";
 import { autenticateRolUsr } from "../controllers/products.js";
 
 const routerCart = Router()
 
-routerCart.get("/", getCarts)
+//routerCart.get("/", getCarts)
+
+routerCart.get("/", getCart)
+
 routerCart.get("/:cid",getCartById)
 
 
-
-
-routerCart.post("/product/:pid", autenticateRolUsr, addProductCartTESTCont) // solo agrega el primer elemento. luego ya no se puede utilizar esta ruta
-routerCart.put("/product/:pid", autenticateRolUsr, addProductCart) // a la cantidad actual en el carrito, le suma esta. no la reemplaza
+routerCart.post("/product/:pid", autenticateRolUsr, addProductCartTESTCont) // agrega de a 1
+routerCart.put("/product/:pid", autenticateRolUsr, addProductCart) // reemplaza la cantidad del producto ingresado por la nueva
 routerCart.put("/", autenticateRolUsr, updateProductsCart) // reemplaza todas las cantidades de los productos ingresados por las nuevas
 routerCart.post("/", finalizarCompra)
 
-
-routerCart.post("/add", autenticateRolUsr, addProductCart) // cambiar logica
-routerCart.get("/:cid/purchase", finalizarCompra) // cambiar logica
 
 routerCart.delete("/product/:pid",removeProductCart)
 routerCart.delete("/",emptyCart)

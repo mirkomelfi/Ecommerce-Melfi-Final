@@ -90,12 +90,17 @@ export const isTokenExpired = (passwordData) => {
 export const currentUser = async (req) => {
     try {
         const cookie = req.cookies['jwt']
-        const user = jwt.verify(cookie,process.env.JWT_SECRET);
-        if (user){
-            return await userModel.findById(user.user.id)
+        if (cookie){
+            const user = jwt.verify(cookie,process.env.JWT_SECRET);
+            if (user){
+                return await userModel.findById(user.user.id)
+            }else{
+                return -1
+            }
         }else{
             return -1
         }
+        
     } catch (error) {
         throw new Error(error)
     }

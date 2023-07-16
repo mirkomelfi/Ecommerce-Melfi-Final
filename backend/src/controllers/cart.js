@@ -8,8 +8,38 @@ export const getCarts = async (req, res) => {
     try {
         
         const carts = await findCarts()
-        req.logger.debug("Encuentra los carts OK")
-        res.status(200).send(carts)
+        if (carts!=-1){
+            res.status(200).send(carts)
+            req.logger.debug("Encuentra los carts OK")
+        }else{
+            res.status(400).send("No ncuentra los carts")
+        }
+       
+
+    } catch (error) {
+        req.logger.fatal("No encuentra los carts")
+        res.status(500).send(error)
+    }
+}
+
+export const getCart= async (req, res) => {
+    try {
+        const user= await currentUser(req)
+        if (user!=-1){
+            const cart= await findCartById(user.idCart)
+
+            if (cart!=-1){
+                res.status(200).send(cart)
+            }else{
+                res.status(200).send("No encuentra el carrito")
+            }
+           
+        }else{
+            res.status(400).json({
+                message: "No esta loggeado",
+            }) 
+        }
+
 
     } catch (error) {
         req.logger.fatal("No encuentra los carts")
@@ -150,16 +180,24 @@ export const finalizarCompra = async (req, res) => {
 export const removeProductCart = async (req, res) => {
     try {
         const user = await currentUser(req)
-        const {pid}= req.params
-        const cart = await deleteProductCart(user.idCart,pid)
+        if (user!=-1){
+            const products= await findProducts()
+            const {pid}= req.params
 
-        if (cart){
-            res.status(200).json({
-                message: "Producto eliminado del carrito",
-            })
+            const cart = await deleteProductCart(user.idCart,products,pid)
+
+            if (cart!=-1){
+                res.status(200).json({
+                    message: "Producto eliminado del carrito",
+                })
+            }else{
+                res.status(400).json({
+                    message: "No se pudo eliminar del carrito",
+                })
+            }
         }else{
             res.status(400).json({
-                message: "No se pudo eliminar del carrito",
+                message: "No esta loggeado",
             })
         }
 
@@ -173,14 +211,20 @@ export const removeProductCart = async (req, res) => {
 export const emptyCart = async (req, res) => {
     try {
         const user = await currentUser(req)
-        const cart = await deleteElementsCart(user.idCart)
-        if (cart){
-            res.status(200).json({
-                message: "Carrito vaciado correctamente",
-            })
+        if (user!=-1){
+            const cart = await deleteElementsCart(user.idCart)
+            if (cart){
+                res.status(200).json({
+                    message: "Carrito vaciado correctamente",
+                })
+            }else{
+                res.status(400).json({
+                    message: "No se pudo vaciar el carrito",
+                })
+            }
         }else{
             res.status(400).json({
-                message: "No se pudo vaciar el carrito",
+                message: "No esta loggeado",
             })
         }
     } catch (error) {
