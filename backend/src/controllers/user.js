@@ -13,10 +13,12 @@ export const getUsers = async (req, res) => {
 export const deleteInactiveUsers = async (req, res) => {
     try {
         const users = await findUsers()
-        const deletedUsers= deleteUsers(users)
+        const deletedUsers= await deleteUsers(users)
+        
         if (deletedUsers.length!=0){
             res.status(200).send({
-                message: "Usuarios eliminados"
+                message: "Usuarios eliminados",
+                usuarios_eliminados: deletedUsers
             })
         }else{
             res.status(400).send({

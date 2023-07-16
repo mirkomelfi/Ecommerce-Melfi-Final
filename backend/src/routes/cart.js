@@ -6,7 +6,7 @@ const routerCart = Router()
 
 //routerCart.get("/", getCarts)
 
-routerCart.get("/", getCart)
+routerCart.get("/", autenticateRolUsr,getCart)
 
 routerCart.get("/:cid",getCartById)
 
@@ -14,11 +14,11 @@ routerCart.get("/:cid",getCartById)
 routerCart.post("/product/:pid", autenticateRolUsr, addProductCartTESTCont) // agrega de a 1
 routerCart.put("/product/:pid", autenticateRolUsr, addProductCart) // reemplaza la cantidad del producto ingresado por la nueva
 routerCart.put("/", autenticateRolUsr, updateProductsCart) // reemplaza todas las cantidades de los productos ingresados por las nuevas
-routerCart.post("/", finalizarCompra)
+routerCart.post("/", autenticateRolUsr, finalizarCompra)
 
 
-routerCart.delete("/product/:pid",removeProductCart)
-routerCart.delete("/",emptyCart)
+routerCart.delete("/product/:pid",autenticateRolUsr,removeProductCart)
+routerCart.delete("/",autenticateRolUsr, emptyCart)
 
 /*
 

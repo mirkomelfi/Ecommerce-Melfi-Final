@@ -1,5 +1,6 @@
 import userModel from "../models/MongoDB/userModel.js";
 import jwt from "jsonwebtoken";
+import nodemailer from 'nodemailer'
 
 export const findUsers = async () => {
 
@@ -23,6 +24,10 @@ export const findUserById = async (id) => {
 export const findUserByEmail = async (email) => {
     try {
         const user = await userModel.findOne({ email: email })
+        
+        if (!user){
+            return -1
+        }
         return user
     } catch (error) {
         throw new Error(error)
@@ -108,20 +113,54 @@ export const currentUser = async (req) => {
 
 export const deleteUsers = async (users) => { 
     try {
-        const expirationTime= 172800000// 2 dias
+        const expirationTime= 21600000//172800000// 2 dias
         const deletedUsers=[]
         
         users.forEach(user=>{
-            const elapsedTime = Date.now()-user.last_connection.now()
-            if (user.rol!="Admin"||user.rol!="admin"){
+            const lastConnection = user.last_connection;
+            const currentDate = new Date();
+
+            const elapsedTime = currentDate-lastConnection
+
+            if (user.rol!="Admin"){
+               
                 if (elapsedTime>=expirationTime){
                     deletedUsers.push(user)
                 }
             }
         })
 
+        let transporter = nodemailer.createTransport({ 
+            host: 'smtp.gmail.com', 
+            port: 465,
+            secure: true,
+            tls: {
+                rejectUnauthorized: false
+            },
+            auth: {
+                user: "mirkomelfi123@gmail.com", //Mail del que se envia informacion
+                pass: "qpeokphyvruqpkrz",
+                authMethod: 'LOGIN'
+            }
+        
+        })
+
         for (const user of deletedUsers) {
+
+            await transporter.sendMail({
+                from: 'Test Coder mirkomelfi123@gmail.com',
+                to: user.email,
+                subject: "Eliminacion de cuenta",
+                html: `
+                    <div>
+                        <h2> Tu cuenta fue eliminada por inactividad </h2>
+                    </div>
+                `,
+                attachments: []
+            })
+
             await deleteUser(user.id)
+
         }
         
         return deletedUsers        

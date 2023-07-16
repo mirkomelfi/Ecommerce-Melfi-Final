@@ -63,8 +63,10 @@ export const passwordRecovery= async (req,res) => {   // en cada ruta a la que i
     try {
 
         const { email } = req.body
+        
         const validEmail= await findUserByEmail(email)
-        if (validEmail){
+        
+        if (validEmail!=-1){
 
             let transporter = nodemailer.createTransport({ //Genero la forma de enviar info desde mail (o sea, desde Gmail con x cuenta)
                 host: 'smtp.gmail.com', //Defino que voy a utilizar un servicio de Gmail
@@ -81,7 +83,7 @@ export const passwordRecovery= async (req,res) => {   // en cada ruta a la que i
             
             })
 
-            let url= "http://localhost:4000/auth/newPass"
+            let url= "http://localhost:3000/auth/newPass"
 
             await transporter.sendMail({
                 from: 'Test Coder mirkomelfi123@gmail.com',
@@ -108,10 +110,15 @@ export const passwordRecovery= async (req,res) => {   // en cada ruta a la que i
 export const createNewPassword= async (req,res) => { 
     try {
         const { email, password } = req.body // ingresa su mail y su nueva contra 
+        if (!email||!password){
+            return res.status(400).send("Campos ingresados invalidos")
+        }
         const userBDD= await findUserByEmail(email)
-        if (userBDD){
-            const passwordCookie=req.signedCookies
-            if (!isTokenExpired(passwordCookie)){ // esta mal el parametro, no se que pasarle
+        
+        if (userBDD!=-1){
+            const passwordCookie=req.signedCookies["cookie cookie"]
+            
+            if (passwordCookie){ 
                 if (validatePassword(password, userBDD.password)) {
                     return res.status(400).send("No puedes colocar la misma contraseña")
                 }else{
@@ -140,8 +147,8 @@ export const registerUser = async (req, res) => {
 
             let newUser={}
             const userBDD = await findUserByEmail(email)
-
-            if (userBDD) {
+            
+            if (userBDD!=-1) {
                 res.status(401).send("Usuario ya registrado")
             } else {
                 const hashPassword = createHash(password)
@@ -155,6 +162,7 @@ export const registerUser = async (req, res) => {
                         rol: rol,
                         email:email,
                         age:age,
+                        last_connection:Date(),
                         password: hashPassword,
                         idCart:idCartUser
                     })
@@ -166,14 +174,12 @@ export const registerUser = async (req, res) => {
                         rol: rol,
                         email:email,
                         age:age,
+                        last_connection:Date(),
                         password: hashPassword
                     })
                 }
 
                 const token = jwt.sign({ user: { id: newUser._id } }, process.env.JWT_SECRET);
-                const userBDDLogged = await findUserByEmail(newUser.email)
-
-                await modifyConnection(userBDDLogged.id,Date())
 
                 res.cookie('jwt', token, { httpOnly: true });
                 res.status(201).json({ token });
