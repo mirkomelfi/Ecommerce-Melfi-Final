@@ -25,7 +25,7 @@ const corsOptions = { //Reviso si el cliente que intenta ingresar a mi servidor 
 const app = express()
 
 app.use(express.json())
-//app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 const connectionMongoose = async () => {
     await mongoose.connect(process.env.MONGODBURL, {
@@ -48,7 +48,7 @@ app.use("/", router)
 
 
 
-app.listen(3000, () => {
-    console.log(`Server on port 3000`)
+app.listen(4000, () => {
+    console.log(`Server on port 4000`)
 })
 
