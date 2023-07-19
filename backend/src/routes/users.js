@@ -4,7 +4,7 @@ import { autenticateRolAdmin } from '../controllers/products.js';
 
 const routerUsers = Router()
 
-routerUsers.get('/', getUsers)
+routerUsers.get('/', autenticateRolAdmin, getUsers)
 routerUsers.delete('/',autenticateRolAdmin, deleteInactiveUsers)
 
 

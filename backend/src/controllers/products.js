@@ -118,25 +118,32 @@ export const deleteProduct = async (req, res) => {
 
 export const autenticateRolUsr = async (req, res, next) => {
     try {
+        
         passport.authenticate('jwt', { session: false }, async (err, user, info) => {
         //El token existe, asi que lo valido
-            const token = req.cookies.jwt;
+            //console.log(req.headers.authorization)
+            //console.log(req.signedCookies)
+           // console.log(req.cookies.jwt)
+           // console.log (req.cookies['jwt'])
+            //console.log (req.headers.authorization)
+            const token = req.cookies.jwt||req.headers.authorization;
 
             jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
                 if (err) {
+                    console.log("token",token)
                     // Token no valido
                     return res.status(401).send("Credenciales no válidas")
                 } else {
                     const idUser= decodedToken.user.id
                     const userBDD = await findUserById(idUser)
-                    console.log(userBDD)
+                    console.log("userBDD en autent rol",userBDD)
                     // Token valido
                     req.user = userBDD
                     const rol=userBDD.rol
                     if (rol==="User"){
                         next()
                     }else{
-                        return res.status(200).send("Solo Rol usuario tiene acceso")
+                        return res.status(400).send("Solo Rol usuario tiene acceso")
                     }
 
                 }

@@ -94,8 +94,10 @@ export const isTokenExpired = (passwordData) => {
 
 export const currentUser = async (req) => {
     try {
-        const cookie = req.cookies['jwt']
+        const cookie = req.headers.authorization
+        console.log(cookie)
         if (cookie){
+            console.log(cookie,"currenuser")
             const user = jwt.verify(cookie,process.env.JWT_SECRET);
             if (user){
                 return await userModel.findById(user.user.id)
@@ -113,7 +115,7 @@ export const currentUser = async (req) => {
 
 export const deleteUsers = async (users) => { 
     try {
-        const expirationTime= 21600000//172800000// 2 dias
+        const expirationTime= 172800000// 2 dias
         const deletedUsers=[]
         
         users.forEach(user=>{

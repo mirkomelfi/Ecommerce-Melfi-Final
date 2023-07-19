@@ -64,6 +64,7 @@ export const getCartById = async (req, res) => {
 export const addProductCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
+        console.log("addProductCart")
         const user = await currentUser(req)
         const products= await findProducts()
 
@@ -93,9 +94,15 @@ export const addProductCart = async (req, res) => {
 export const addProductCartTESTCont = async (req, res) => {
     try {
         //idCart,idProduct,quantity
+        
+        console.log("addProductCartTESTCont")
         const {pid}= req.params
+        console.log(pid,"desde back")
         const products= await findProducts()
+        console.log(products)
+        console.log(req.headers)
         const user = await currentUser(req)
+        console.log(user,"desde back")
         const cart = await addProductToCartTESTSer(user.idCart,products,pid)
         if (cart!=-1){
             res.status(200).json({
@@ -116,6 +123,7 @@ export const addProductCartTESTCont = async (req, res) => {
 export const updateProductsCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
+        console.log("updateProductsCart")
         const user = await currentUser(req)
         const products= await findProducts()
         const newCart=req.body
