@@ -1,34 +1,30 @@
 import { useRef } from "react"
-
 export const Login = () => {
 
     const datForm = useRef()
-
     const consultarForm = (e) => {
         //Consultar los datos del formulario
         e.preventDefault()
         const datosFormulario = new FormData(datForm.current) //Pasar de HTML a Objeto Iterable
         const cliente = Object.fromEntries(datosFormulario) //Pasar de objeto iterable a objeto simple
-        console.log(cliente)
 
-        fetch('http://localhost:4000/api/session/login', {
-            method: "POST",
+        fetch('http://localhost:4000/api/users/', {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(cliente)
+            }
+           
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data.token)
-                document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
-                
+              //  document.cookie = `token=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
+               // console.log(data.token)
+                console.log(data)
             })
             .catch(error => console.error(error))
 
         e.target.reset() //Reset form
     }
-
     return (
         <div className="container divForm" >
             <h3>Formulario de Inicio de Sesion</h3>
