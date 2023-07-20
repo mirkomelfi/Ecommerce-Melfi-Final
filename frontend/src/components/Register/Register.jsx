@@ -19,7 +19,7 @@ export const Register = () => {
             body: JSON.stringify(cliente)
         }).then(response => response.json())
             .then(data => {
-                document.cookie = `token=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
+                document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
                 console.log(data.token)
             })
             .catch(error => console.error(error))

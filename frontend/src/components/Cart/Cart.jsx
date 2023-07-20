@@ -49,10 +49,10 @@ const Cart = () =>{
                    
                     <p>{producto.quantity}</p>
  
-                    <button onClick={()=>removeItem(producto.id)}>Quitar del carrito</button>
+                    <button onClick={()=>removeItem(producto.productId)}>Quitar del carrito</button>
                 </div>
                 
-                )):<Navigate to="/" />}
+                )):<Navigate to="/finalizada" />}
                  <button onClick={()=>finalizarCompra()}>finalizar Compra</button>
            
         </>

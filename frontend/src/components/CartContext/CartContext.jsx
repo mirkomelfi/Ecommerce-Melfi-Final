@@ -1,20 +1,19 @@
 import {createContext,useEffect,useState} from "react"
 export const Context =createContext();
-import { useCookies } from "react-cookie";
 
 
 const CustomProvider=({children})=>{  
-    const [cookies, setCookie] = useCookies();
+    const [cookies, setCookie] = useState()
     const [cart,setCart]=useState([])
     const [updateCart,setUpdateCart]=useState(false)
-    console.log("cookies",cookies)
-    console.log(cookies.jwt)
+    console.log("cookiesss",cookies)
+    //console.log("cookies.jwt",cookies.jwt)
     useEffect(() => { 
     fetch(`http://localhost:4000/api/carts/`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization":`${cookies.jwt}`
+            "Authorization":`${cookies}`
         }
     })
         .then(response => response.json())
@@ -31,21 +30,25 @@ const CustomProvider=({children})=>{
     const [precioTotal,setprecioTotal]=useState(0)
     const [cantElem,setCantElem]=useState(0) 
 
-    const addItem= async (item,cantidad)=>{
+    const addItem=async (item,cantidad,cookies)=>{
         //console.log(localStorage.getItem("jwt"))
        // if (!isInCart(item._id)){
+        console.log("cookiesss",cookies)
+        console.log("cookies.jwt",cookies)
+        setCookie(cookies)
         let status=0
             if (cantidad==1){
-                await fetch(`http://localhost:4000/api/carts/product/${item._id}`, {
+               await fetch(`http://localhost:4000/api/carts/product/${item._id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization":`${cookies.jwt}`
+                        "Authorization":`${cookies}`
                     },
                     body:""
                 })
                 .then(response => {
-                    status= response.status
+                   status=response.status
+                   console.log("statuuuus",status)
                 })
                 .catch(error => console.error(error))
             }else{
@@ -55,12 +58,14 @@ const CustomProvider=({children})=>{
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization":`${cookies.jwt}`
+                            "Authorization":`${cookies}`
                         },
                         body:JSON.stringify(cantidadUpdated)
                     })
                     .then(response => {
+                        
                         status= response.status
+                        console.log("statuuuus",status)
                     })
                     .catch(error => console.error(error))
                 const itemNuevo={...item, quantity:cantidad}
@@ -86,8 +91,22 @@ const CustomProvider=({children})=>{
     }
 
 
-    const removeItem= (id)=>{
-        setCart(
+    const removeItem=(id)=>{
+        let status=0
+         fetch(`http://localhost:4000/api/carts/product/${id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization":`${cookies}`
+                        }
+        })
+            .then(response => {
+                status= response.status
+                setUpdateCart(true)
+            })
+            .catch(error => console.error(error))
+        return status
+        /*setCart(
             cart.filter((item)=>{
                 if (item.id===id){
                     setprecioTotal(precioTotal-(item.cantidad*item.precio));
@@ -95,7 +114,7 @@ const CustomProvider=({children})=>{
                 }
                 return item.id!==id
             }) 
-        )
+        )*/
     }
 
     const clear= ()=>{
