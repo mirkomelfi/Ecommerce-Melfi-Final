@@ -160,7 +160,7 @@ export const autenticateRolAdmin = async (req, res, next) => {
     try {
         passport.authenticate('jwt', { session: false }, async (err, user, info) => {
         //El token existe, asi que lo valido
-            const token = req.cookies.jwt;
+            const token = req.cookies.jwt||req.headers.authorization;
 
             jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
                 if (err) {
@@ -192,7 +192,6 @@ export const getProducts = async (req, res) => {
     try {
         
         const products = await findProducts(req.query)
-
         if (products.length!==0){
             res.status(200).send(products) 
         }else{
