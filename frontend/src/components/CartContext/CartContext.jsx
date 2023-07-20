@@ -1,17 +1,40 @@
-import {createContext,useState} from "react"
+import {createContext,useEffect,useState} from "react"
 export const Context =createContext();
 import { useCookies } from "react-cookie";
 
 
 const CustomProvider=({children})=>{  
+    const [cookies, setCookie] = useCookies();
     const [cart,setCart]=useState([])
+    const [updateCart,setUpdateCart]=useState(false)
+    console.log("cookies",cookies)
+    console.log(cookies.jwt)
+    useEffect(() => { 
+    fetch(`http://localhost:4000/api/carts/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization":`${cookies.jwt}`
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+        //console.log(data.products)
+        const items= data.products
+        setCart(items) 
+        setUpdateCart(false)
+
+        })
+        .catch(error => console.error(error))
+    },[updateCart])
+
     const [precioTotal,setprecioTotal]=useState(0)
     const [cantElem,setCantElem]=useState(0) 
-    const [cookies, setCookie] = useCookies();
-    console.log(cookies.jwt)
+
     const addItem= async (item,cantidad)=>{
         //console.log(localStorage.getItem("jwt"))
        // if (!isInCart(item._id)){
+        let status=0
             if (cantidad==1){
                 await fetch(`http://localhost:4000/api/carts/product/${item._id}`, {
                     method: "POST",
@@ -21,9 +44,8 @@ const CustomProvider=({children})=>{
                     },
                     body:""
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
+                .then(response => {
+                    status= response.status
                 })
                 .catch(error => console.error(error))
             }else{
@@ -37,10 +59,16 @@ const CustomProvider=({children})=>{
                         },
                         body:JSON.stringify(cantidadUpdated)
                     })
+                    .then(response => {
+                        status= response.status
+                    })
+                    .catch(error => console.error(error))
                 const itemNuevo={...item, quantity:cantidad}
                 //setCart([...cart,itemNuevo])              
             }
-            return 1
+            setUpdateCart(true)
+            return status
+           
         /*}else{
             setCart(
                 cart.map(prod=>{
@@ -71,10 +99,10 @@ const CustomProvider=({children})=>{
     }
 
     const clear= ()=>{
-        setCart([])
+        setUpdateCart(true)
         setprecioTotal(0)
         setCantElem(0) 
-    }
+    } 
     
     const isInCart= (id)=> {
         const busqueda=cart.find((elemento)=>elemento.id===id)

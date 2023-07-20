@@ -3,7 +3,7 @@ import "./ItemListContainer.css";
 import { useState, useEffect } from "react";
 import {ItemList} from "../ItemList/ItemList"
 import {useParams} from "react-router-dom";
-import { getProducts } from "../MongoDB/MongoDB";
+
 
 export const ItemListContainer = ({greeting}) =>{
     const {category}= useParams();
@@ -21,9 +21,11 @@ export const ItemListContainer = ({greeting}) =>{
         })
           .then(response => response.json())
           .then(data => {
-              const productos= data.docs
+            console.log(data)
+              //const productos= data.docs
+              const productos= data
               setListaProd(productos)
-              console.log(productos)
+              console.log("productos",productos)
           })
           .catch(error => console.error(error))
           .finally(()=>{

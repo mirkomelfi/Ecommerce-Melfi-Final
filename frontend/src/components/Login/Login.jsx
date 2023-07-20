@@ -1,8 +1,10 @@
 import { useRef } from "react"
-
+import { useState } from "react"
+import { Navigate } from "react-router-dom"
 export const Login = () => {
-
+    const[ loggeado,setLoggeado]=useState(false)
     const datForm = useRef()
+    
 
     const consultarForm = (e) => {
         //Consultar los datos del formulario
@@ -22,30 +24,38 @@ export const Login = () => {
             .then(data => {
                 console.log(data.token)
                 document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
-                
+                setLoggeado(true)
             })
             .catch(error => console.error(error))
 
         e.target.reset() //Reset form
     }
-
+    
     return (
-        <div className="container divForm" >
-            <h3>Formulario de Inicio de Sesion</h3>
-            <form onSubmit={consultarForm} ref={datForm}>
+        <div>
+            {loggeado?
+        <Navigate to="/" />
+        :
+        <>
+            <div className="container divForm" >
+                <h3>Formulario de Inicio de Sesion</h3>
+                <form onSubmit={consultarForm} ref={datForm}>
 
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" className="form-control" name="email" />
-                </div>
+                    <div className="mb-3">
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input type="email" className="form-control" name="email" />
+                    </div>
 
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Contraseña</label>
-                    <input type="password" className="form-control" name="password" />
-                </div>
+                    <div className="mb-3">
+                        <label htmlFor="password" className="form-label">Contraseña</label>
+                        <input type="password" className="form-control" name="password" />
+                    </div>
 
-                <button type="submit" className="btn btn-primary">Iniciar Sesion</button>
-            </form>
+                    <button type="submit" className="btn btn-primary">Iniciar Sesion</button>
+                </form>
+            </div>
+        </>
+        }
         </div>
     )
 }

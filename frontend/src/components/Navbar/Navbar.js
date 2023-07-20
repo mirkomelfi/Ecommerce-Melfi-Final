@@ -3,6 +3,7 @@ import React from "react";
 //import { CartWidget } from "../CartWidget/CartWidget";
 import {Link} from "react-router-dom";
 import "./Navbar.css"
+import { CartWidget } from "../CartWidget/CartWidget";
 
 const Navbar = () =>{
     return (
@@ -12,6 +13,7 @@ const Navbar = () =>{
                 <Link to="/category/cursos">Cursos</Link>
                 <Link to="/category/seminarios">Seminarios</Link>
                 <Link to="/category/accesorios">Accesorios</Link> 
+                <CartWidget/>
                 
             </nav>
         </header>
