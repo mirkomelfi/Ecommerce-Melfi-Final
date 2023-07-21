@@ -94,8 +94,7 @@ export const isTokenExpired = (passwordData) => {
 
 export const currentUser = async (req) => {
     try {
-        const cookie = req.headers.authorization
-        console.log(cookie)
+        const cookie = req.cookies.jwt||req.headers.authorization
         if (cookie){
             console.log(cookie,"currenuser")
             const user = jwt.verify(cookie,process.env.JWT_SECRET);

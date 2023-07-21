@@ -20,7 +20,7 @@ export const loginUser = async (req, res, next) => {
                 const { email, password } = req.body
                 const userBDD = await findUserByEmail(email)
 
-                if (!userBDD) {
+                if (userBDD==-1) {
                     // UserBDD no encontrado en mi aplicacion
                     return res.status(401).send("User no encontrado")
                 }
@@ -39,7 +39,7 @@ export const loginUser = async (req, res, next) => {
                 return res.status(200).json({ token })
             } else {
                 //El token existe, asi que lo valido
-                const token = req.cookies.jwt;
+                const token = req.cookies.jwt//||req.headers.authorization;
                 jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
                     if (err) {
                         // Token no valido
