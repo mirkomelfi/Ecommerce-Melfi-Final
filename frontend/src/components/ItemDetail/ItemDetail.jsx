@@ -22,7 +22,6 @@ const ItemDetail = ({listaProd})=>{
        console.log("response onADD",response)
        if (response==200){
         setAgregado(true);
-        console.log("agregado",agregado)
         setErrorLog(false);
         setErrorRol(false);
         }
@@ -37,6 +36,7 @@ const ItemDetail = ({listaProd})=>{
                 console.log("error al agregar. su rol no le permite")
             }
         }
+        console.log("agregado",agregado)
     }
 
     return (
