@@ -4,47 +4,108 @@ export const CreacionUser = () => {
 
     const datForm = useRef() //Crear una referencia para consultar los valoresa actuales del form
 
-    const [boton,setBoton]=useState("")
+    const [boton,setBoton]=useState(null)
+    const [addRol,setAddRol]=useState(false)
     
     const botonSeleccionado= (botonSelec) => {
-        //setBoton(botonSelec)
+        setBoton(botonSelec)
+        if (botonSelec=="Modificar"){
+            setAddRol(true)
+        }
+        console.log(botonSelec)
+        return;
     }
-    const consultarForm = (e) => {
+
+    const consultarForm = async(e) => {
         //Consultar los datos del formulario
         e.preventDefault()
-        console.log(e)
-        console.log(boton)
+
         const datosFormulario = new FormData(datForm.current) //Pasar de HTML a Objeto Iterable
         const userData = Object.fromEntries(datosFormulario) //Pasar de objeto iterable a objeto simple
-        console.log(userData)
-        /*fetch('http://localhost:4000/api/session/register', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userData)
-        }).then(response => response.json())
-            .then(data => {
-                document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
-                console.log(data.token)
-            })
-            .catch(error => console.error(error))
+
+        if (boton=="Visualizar"){
+            await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials:"include"
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status==200){
+                        console.log(data.message)
+                    }
+                    if (data.status==400){
+                        console.log(data.message)
+                    }
+                })
+                .catch(error => console.error(error))
+        }
+        if (boton=="Modificar"){
+            const newRol=userData.rol
+            console.log(newRol)
+            if (!newRol){
+                console.log("dato invalido")
+            }else{
+                const modifiedRol= {rol:newRol}
+                await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body:  JSON.stringify(modifiedRol),
+                    credentials:"include"
+                }).then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                    })
+                    .catch(error => console.error(error))
+            }
+        }
+            
+        if (boton=="Eliminar"){
+            await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials:"include"
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                })
+                .catch(error => console.error(error))
+        }
+
         e.target.reset() //Reset form
-        */
+        
     }
     return (
-        <div className="container divForm" >
-            <h3>Creacion de producto</h3>
-            <form onSubmit={consultarForm} ref={datForm}>
-                <div className="mb-3">
-                    <label htmlFor="id_user" className="form-label">Id del Usuario</label>
-                    <input type="text" className="form-control" name="first_name" required />
+        <div className="container divAdmin" >
+            <h3>Vista ADMIN</h3>
+            <h4>Control de Usuarios</h4>
+            {boton?
+                <div className="container divForm" >
+                    <form onSubmit={consultarForm} ref={datForm}>
+                        <div className="mb-3">
+                            <label htmlFor="id_user" className="form-label">Id del Usuario</label>
+                            <input type="text" className="form-control" name="id_user" required />
+                        </div>
+                        {addRol&&<div className="mb-3">
+                            <label htmlFor="id_user" className="form-label">Rol</label>
+                            <input type="text" className="form-control" name="rol" required />
+                        </div>}
+                        <button type="submit"  className="btn btn-primary">Solicitar</button>
+                    </form>
                 </div>
-
-                <button type="submit" onClick={botonSeleccionado("Visualizar")} className="btn btn-primary">Visualizar</button>
-                <button type="submit" onClick={botonSeleccionado("Modificar")} className="btn btn-primary">Modificar Rol</button>
-                <button type="submit" onClick={botonSeleccionado("Eliminar")} className="btn btn-primary">Eliminar</button>
-            </form>
+                :
+                <div className="container botones" >
+                    <button  onClick={()=>botonSeleccionado("Visualizar")} className="btn btn-primary">Visualizar</button>
+                    <button  onClick={()=>botonSeleccionado("Modificar")} className="btn btn-primary">Modificar Rol</button>
+                    <button  onClick={()=>botonSeleccionado("Eliminar")} className="btn btn-primary">Eliminar</button>
+                </div>
+            }
         </div>
+
     )
 }
