@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { autenticateRolAdmin, deleteProduct, updateProduct, addProduct, getProducts, getProductById,addMockingProducts} from "../controllers/products.js";
+import { deleteProduct, updateProduct, addProduct, getProducts, getProductById} from "../controllers/products.js";
+import { passportError } from "../middlewares/passportError.js";
+import { roleValidation } from "../middlewares/autenticateRol.js";
 
 
 const routerProduct = Router()
@@ -7,11 +9,9 @@ const routerProduct = Router()
 routerProduct.get("/", getProducts)
 routerProduct.get("/:id", getProductById)
 
-routerProduct.post("/mockingproducts", addMockingProducts)
-
-routerProduct.post("/", autenticateRolAdmin, addProduct)
-routerProduct.put("/:id", autenticateRolAdmin, updateProduct)
-routerProduct.delete("/:id", autenticateRolAdmin, deleteProduct)
+routerProduct.post("/", passportError("jwt"),roleValidation(["Admin"]), addProduct)
+routerProduct.put("/:id", passportError("jwt"),roleValidation(["Admin"]), updateProduct)
+routerProduct.delete("/:id", passportError("jwt"),roleValidation(["Admin"]), deleteProduct)
 
 
 

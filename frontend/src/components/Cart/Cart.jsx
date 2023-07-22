@@ -16,7 +16,7 @@ const Cart = () =>{
 
     const {cart, precioTotal, removeItem,clear}=useContext(Context); 
 
-    console.log(cart)
+    console.log("cart",cart)
 
     const finalizarCompra = ()=>{
         fetch(`http://localhost:4000/api/carts/`, {

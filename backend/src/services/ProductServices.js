@@ -26,36 +26,7 @@ export const findProducts = async (params) => {
     }
 }
 
-const createRandomProducts = () => {
-    return{
-        productId: faker.database.mongodbObjectId(),
-        title:faker.commerce.productName(),
-        description:faker.commerce.productDescription(),
-        price:faker.commerce.price(),
-        stock:faker.number.int({min:10,max:100,precision:1}),
-        status:true,
-        code:faker.string.uuid(),
-        category:1,
-        thumbnails:[]
-    }
-}
 
-export const createMockingProducts = async () => {
-
-    try {
-        const products=[]
-        for (let i=0;i<100;i++){
-            products.push(createRandomProducts())
-        }
-
-        const productsBDD= await productModel.insertMany(products)
-        
-        return productsBDD
-    } catch (error) {
-        throw new Error(error)
-    }
-
-}
 
 
 export const findProductById = async (id) => {

@@ -11,6 +11,7 @@ import ItemDetailContainer from './ItemDetailContainer/ItemDetailContainer'
 import { Mensaje } from './Mensaje/Mensaje';
 import CustomProvider from './CartContext/CartContext';
 import Cart from './Cart/Cart';
+import { CreacionUser } from './CreacionUser/CreacionUser';
 
 export const App = () => {
   return (
@@ -28,6 +29,7 @@ export const App = () => {
           <Route path="/cart" element={<Cart />}/> 
           <Route path="/finalizada" element={<Mensaje greeting= "compra finalizada"/>}/> 
           <Route path="/rol" element={<Mensaje greeting= "Su rol no le permite acceso a esta ruta"/>}/> 
+          <Route path="/admin" element={<CreacionUser />}/> 
           <Route path='*' element={<h1>404 Not Found</h1>} />
         </Routes>
         footer

@@ -4,27 +4,9 @@ import { createTicket } from "../services/TicketServices.js"
 import { currentUser, findUserById, findUsers } from "../services/UserServices.js"
 
 
-export const getCarts = async (req, res) => {
-    try {
-        
-        const carts = await findCarts()
-        if (carts!=-1){
-            res.status(200).send(carts)
-            req.logger.debug("Encuentra los carts OK")
-        }else{
-            res.status(400).send("No ncuentra los carts")
-        }
-       
-
-    } catch (error) {
-        req.logger.fatal("No encuentra los carts")
-        res.status(500).send(error)
-    }
-}
-
 export const getCart= async (req, res) => {
     try {
-        const user= await currentUser(req)
+        const user= req.user//await currentUser(req)
         if (user!=-1){
             const cart= await findCartById(user.idCart)
 
@@ -48,24 +30,12 @@ export const getCart= async (req, res) => {
 
 }
 
-export const getCartById = async (req, res) => {
-    const {cid}=req.params
-    try {
-        const cart = await findCartById(cid)
-        res.status(200).send(cart)
 
-    } catch (error) {
-        res.status(500).send(error)
-    }
-
-}
-
-
-export const addProductCart = async (req, res) => {
+export const updateProductCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
         console.log("addProductCart")
-        const user = await currentUser(req)
+        const user = req.user//await currentUser(req)
         const products= await findProducts()
 
         const {pid}= req.params
@@ -91,7 +61,7 @@ export const addProductCart = async (req, res) => {
 
 }
 
-export const addProductCartTESTCont = async (req, res) => {
+export const addProductCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
         
@@ -101,7 +71,7 @@ export const addProductCartTESTCont = async (req, res) => {
         const products= await findProducts()
         console.log(products)
         console.log(req.headers)
-        const user = await currentUser(req)
+        const user = req.user//await currentUser(req)
         console.log(user,"desde back")
         const cart = await addProductToCartTESTSer(user.idCart,products,pid)
         if (cart!=-1){
@@ -124,7 +94,7 @@ export const updateProductsCart = async (req, res) => {
     try {
         //idCart,idProduct,quantity
         console.log("updateProductsCart")
-        const user = await currentUser(req)
+        const user = req.user//await currentUser(req)
         const products= await findProducts()
         const newCart=req.body
         const cart = await updateProductsCartSER(user.idCart,products,newCart)
@@ -147,7 +117,7 @@ export const updateProductsCart = async (req, res) => {
 
 
 export const finalizarCompra = async (req, res) => {
-    const user = await currentUser(req)
+    const user =  req.user//await currentUser(req)
     try {
         const [cartFinal,cartCancelado] = await checkStock(user.idCart)
 
@@ -187,7 +157,7 @@ export const finalizarCompra = async (req, res) => {
 
 export const removeProductCart = async (req, res) => {
     try {
-        const user = await currentUser(req)
+        const user = req.user//await currentUser(req)
         if (user!=-1){
             const products= await findProducts()
             const {pid}= req.params
@@ -218,7 +188,7 @@ export const removeProductCart = async (req, res) => {
 
 export const emptyCart = async (req, res) => {
     try {
-        const user = await currentUser(req)
+        const user =  req.user//await currentUser(req)
         if (user!=-1){
             const cart = await deleteElementsCart(user.idCart)
             if (cart){

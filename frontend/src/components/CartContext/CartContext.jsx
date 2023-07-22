@@ -7,7 +7,9 @@ const CustomProvider=({children})=>{
     const [cart,setCart]=useState([])
     const [updateCart,setUpdateCart]=useState(false)
     console.log("cookiesss",cookies)
+    console.log("docccc",document.cookie)
     //console.log("cookies.jwt",cookies.jwt)
+
     useEffect(() => { 
     fetch(`http://localhost:4000/api/carts/`, {
         method: "GET",
@@ -20,9 +22,9 @@ const CustomProvider=({children})=>{
         .then(data => {
         //console.log(data.products)
         const items= data.products
+        console.log("itemsss",items)
         setCart(items) 
         setUpdateCart(false)
-
         })
         .catch(error => console.error(error))
     },[updateCart])
@@ -30,21 +32,22 @@ const CustomProvider=({children})=>{
     const [precioTotal,setprecioTotal]=useState(0)
     const [cantElem,setCantElem]=useState(0) 
 
-    const addItem=async (item,cantidad,cookies)=>{
+    const addItem=async (item,cantidad,cookie)=>{
         //console.log(localStorage.getItem("jwt"))
        // if (!isInCart(item._id)){
-        console.log("cookiesss",cookies)
-        console.log("cookies.jwt",cookies)
-        setCookie(cookies)
+        console.log("cookiesss",cookie)
+        console.log("cookies.jwt",cookie)
+        //setCookie(cookie)
         let status=0
             if (cantidad==1){
                await fetch(`http://localhost:4000/api/carts/product/${item._id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization":`${cookies}`
+                       // "Authorization":`${cookies}`
                     },
-                    body:""
+                    body:"",
+                    credentials:"include"
                 })
                 .then(response => {
                    status=response.status

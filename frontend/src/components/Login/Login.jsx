@@ -4,33 +4,31 @@ import { Navigate } from "react-router-dom"
 import { useCookies } from "react-cookie";
 export const Login = () => {
     
-    const [cookies, setCookie,removeCookie] = useCookies();
+    const [cookies, setCookie,removeCookie] = useCookies(["jwt"]);
     const[ loggeado,setLoggeado]=useState(false)
     const[ error,setError]=useState(false)
     const datForm = useRef()
-
-
 
     const desloggear=async()=>{
         await fetch('http://localhost:4000/api/session/logout', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization":`${cookies.jwt}`
+                //"Authorization":`${cookies.jwt}`
             }
         })
         .then(response => console.log(response)/*response.json()*/)
             .then(data => {
                 console.log(data)
-                setLoggeado(false)
-                console.log(cookies)
+                console.log("logout",cookies.jwt)
                 removeCookie("jwt")
+                setLoggeado(false)
             })
             .catch(error => console.error(error))
     }
 
 
-    const consultarForm = (e) => {
+    const consultarForm = async(e) => {
         //Consultar los datos del formulario
         e.preventDefault()
         const datosFormulario = new FormData(datForm.current) //Pasar de HTML a Objeto Iterable
@@ -40,18 +38,21 @@ export const Login = () => {
         console.log("faltan datos")
        }else{
 
-            fetch('http://localhost:4000/api/session/login', {
+            await fetch('http://localhost:4000/api/session/login', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(cliente)
+                body: JSON.stringify(cliente),
+                credentials: "include"
             })
                 .then(response => response.json())
                 .then(data => {
                     //console.log(data.token)
-                    document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
+                    //document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
                     setLoggeado(true)
+                    console.log("cdj",document.cookie)
+                    //setCookie(document.cookie)
                 })
                 .catch(error => console.error(error))
 
