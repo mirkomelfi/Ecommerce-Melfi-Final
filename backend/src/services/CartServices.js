@@ -21,7 +21,8 @@ export const findCarts = async () => {
 
 export const findCartById = async (id) => {
     try {
-        const cart = await cartModel.findById(id)  //.populate("products.Products") checkear el populate
+        const cart = await cartModel.findById(id)  //.populate("products.Products") //checkear el populate
+        const cartPopulate = await cart.populate({ path: "products.productId", model: productModel })
         if (!cart){
             return -1
         }

@@ -12,8 +12,8 @@ const cookieExtractor=(req)=>{
             }
         }
     }
-    console.log(req.cookies)
-    console.log(req.cookies.jwt)
+    console.log("req.cookies",req.cookies)
+    console.log("req.cookies.jwt",req.cookies.jwt)
     const token=req.cookies?req.cookies.jwt:null
     console.log("token cookie ex",token)
     return token
@@ -26,9 +26,9 @@ const jwtOptions = {
 
 export const strategyJWT = new JwtStrategy(jwtOptions, async (payload, done) => {
     try {
-        console.log(payload)
+        console.log("payload",payload)
         const user = await findUserById(payload.user.id)
-        console.log(user)
+        console.log("user",user)
 
         if (!user) {
             return done(null, false)

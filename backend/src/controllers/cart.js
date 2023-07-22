@@ -11,7 +11,11 @@ export const getCart= async (req, res) => {
             const cart= await findCartById(user.idCart)
 
             if (cart!=-1){
-                res.status(200).send(cart)
+                res.status(200).json({
+                    status:200,
+                    cart:cart
+                })
+
             }else{
                 res.status(200).send("No encuentra el carrito")
             }
