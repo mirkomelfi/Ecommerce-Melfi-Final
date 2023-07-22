@@ -58,6 +58,21 @@ export const modifyUser = async (id, password) => {
 
 }
 
+
+export const modifyRol = async (id, rol) => {
+    try {
+        const user = await userModel.findByIdAndUpdate(id, {rol})
+        if (user){
+            return user
+        }
+        return -1
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
+
 export const modifyConnection = async (id, connection) => {
     try {
 
