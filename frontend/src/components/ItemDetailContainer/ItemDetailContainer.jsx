@@ -33,7 +33,7 @@ const ItemDetailContainer = () =>{
 
     return (
         <>
-          {loading ? <p>Cargando...</p> : <ItemDetail listaProd={listaProd}/>}
+          {loading ? <p>Cargando...</p> : <ItemDetail pid={_id} listaProd={listaProd}/>}
         </>
     );
   } 

@@ -9,7 +9,6 @@ import { Products } from './Products/Products';
 import {ItemListContainer} from './ItemListContainer/ItemListContainer';
 import ItemDetailContainer from './ItemDetailContainer/ItemDetailContainer'
 import { Mensaje } from './Mensaje/Mensaje';
-import CustomProvider from './CartContext/CartContext';
 import Cart from './Cart/Cart';
 import { CreacionUser } from './CreacionUser/CreacionUser';
 
@@ -17,7 +16,6 @@ export const App = () => {
   return (
     <>
       <BrowserRouter>
-      <CustomProvider> 
         <Navbar/>
         <Routes>
           <Route path="/category/:category"  element={<ItemListContainer greeting="¡Bienvenido al sitio web de la Escuela! ¡Esperamos contar con lo que está buscando!"/>}/>
@@ -32,8 +30,7 @@ export const App = () => {
           <Route path="/admin" element={<CreacionUser />}/> 
           <Route path='*' element={<h1>404 Not Found</h1>} />
         </Routes>
-        footer
-        </CustomProvider> 
+        
       </BrowserRouter>
 
     </>

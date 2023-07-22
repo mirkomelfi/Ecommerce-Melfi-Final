@@ -1,10 +1,9 @@
 import { useRef } from "react"
 import { useState,useEffect } from "react"
 import { Navigate } from "react-router-dom"
-import { useCookies } from "react-cookie";
+
 export const Login = () => {
     
-    const [cookies, setCookie,removeCookie] = useCookies(["jwt"]);
     const[ loggeado,setLoggeado]=useState(false)
     const[ error,setError]=useState(false)
     const datForm = useRef()
@@ -14,14 +13,12 @@ export const Login = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                //"Authorization":`${cookies.jwt}`
-            }
+            },
+            credentials:"include"
         })
         .then(response => console.log(response)/*response.json()*/)
             .then(data => {
                 console.log(data)
-                console.log("logout",cookies.jwt)
-                removeCookie("jwt")
                 setLoggeado(false)
             })
             .catch(error => console.error(error))
@@ -48,16 +45,13 @@ export const Login = () => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    //console.log(data.token)
-                    //document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
                     setLoggeado(true)
-                    console.log("cdj",document.cookie)
-                    //setCookie(document.cookie)
+
                 })
                 .catch(error => console.error(error))
 
             e.target.reset() //Reset form
-        }       
+        }
     }
     
     return (

@@ -1,37 +1,81 @@
 import React from "react";
-import {Link, Navigate} from "react-router-dom";
-import { useContext } from "react";
-import { Context } from "../CartContext/CartContext";
+import { Navigate} from "react-router-dom";
 
-import { useState } from "react";
-import { useCookies } from "react-cookie";
+import { useState,useEffect } from "react";
+
 import "./Cart.css";
 
 const Cart = () =>{ 
-    const [cookies, setCookie] = useCookies();
+
     const [finalizada, setFinalizada] = useState(false);
+    const [cart, setCart] = useState([]);
 
-    console.log("cookies",cookies)
-    console.log(cookies.jwt)
+    const fetchCart = async () => {
+        try {
+            let url = "http://localhost:4000/api/carts/";
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+            });
+            const data = await response.json();
 
-    const {cart, precioTotal, removeItem,clear}=useContext(Context); 
+            if (data.status == 200) {
 
-    console.log("cart",cart)
+                setCart(data.cart.products);
+            } else {
+                console.log(data)
+                //setMessage(data.message);
+            }
+        } catch (error) {
+           // setMessage('Hubo un problema, intente más tarde');
+            console.error('Error fetching products:', error);
+        }
+    }
+
+    useEffect(() => { 
+        fetchCart()
+    },[])
+
+
+    const removeItem=async(id)=>{
+        let status=0
+        await fetch(`http://localhost:4000/api/carts/product/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials:"include"
+            })
+            .then(response => {
+                status= response.status
+                if (status == 200) {
+                    fetchCart()
+                } else {
+                    console.error("error");
+                }
+            })
+            .catch(error => console.error(error))
+
+        return status
+    }
 
     const finalizarCompra = ()=>{
         fetch(`http://localhost:4000/api/carts/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization":`${cookies.jwt}`
         },
-        body:""
+        body:"",
+        credentials:"include"
     })
         .then(response => response.json())
         .then(data => {
         console.log(data)
         setFinalizada(true)
-        clear()
+
         //const items= data.products
        
 
@@ -43,16 +87,17 @@ const Cart = () =>{
     return (
         <>
             <h3>Carrito</h3>
-            {!finalizada?(cart.map(producto=>
-                <div key= {producto.productId} className="producto">
-                    <h1>{producto.productId}</h1>
+            {cart&&(!finalizada?(cart.map(producto=>
+                <div key= {producto.productId._id} className="producto">
+                    <h1>{producto.productId.title}</h1>
                    
                     <p>{producto.quantity}</p>
  
-                    <button onClick={()=>removeItem(producto.productId)}>Quitar del carrito</button>
+                    <button onClick={()=>removeItem(producto.productId._id)}>Quitar del carrito</button>
                 </div>
                 
-                )):<Navigate to="/finalizada" />}
+                )):<Navigate to="/finalizada" />)}
+
                  <button onClick={()=>finalizarCompra()}>finalizar Compra</button>
            
         </>

@@ -1,43 +1,57 @@
 import "./ItemDetail.css";
 import ItemCount from "../ItemCount/ItemCount";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {Link} from "react-router-dom";
-import { Context } from "../CartContext/CartContext";
+
 import { Navigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
 
 
-const ItemDetail = ({listaProd})=>{
 
-    const [cookies, setCookie] = useCookies();
-    console.log(cookies)
+const ItemDetail = ({pid,listaProd})=>{
+
     const [agregado,setAgregado]=useState(false)
     const [errorLog,setErrorLog]=useState(false)
     const [errorRol,setErrorRol]=useState(false)
-    const {addItem}=useContext(Context);
     
+    const onAdd = async (contador) => {
+        try {
 
-    const onAdd= async(contador)=>{
-       const response=  await addItem(listaProd,contador,cookies.jwt)
-       console.log("response onADD",response)
-       if (response==200){
-        setAgregado(true);
-        setErrorLog(false);
-        setErrorRol(false);
-        }
-        else{
+            const cantidadUpdated={quantity:contador}
+                
+            const response = await fetch(`http://localhost:4000/api/carts/product/${pid}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body:JSON.stringify(cantidadUpdated),
+                    credentials:"include"
+                })
+
+            const data = await response.json()
             
-            if (response==401){
-                setErrorLog(true);
-                console.log("error al agregar. no esta loggeado")
+            if(data.status == 200) {
+                console.log("Se ha agregado el producto")
+                setAgregado(true);
+                setErrorLog(false);
+                setErrorRol(false);
+            } else {
+                console.log(data)
+                if (response==401){
+                    setErrorLog(true);
+                    console.log("error al agregar. no esta loggeado")
+                }
+                if (response==400){
+                    setErrorRol(true);
+                    console.log("error al agregar. su rol no le permite")
+                }
             }
-            if (response==400){
-                setErrorRol(true);
-                console.log("error al agregar. su rol no le permite")
-            }
+
+
+        } catch (error) {
+            console.error(error);
         }
-        console.log("agregado",agregado)
     }
+
 
     return (
         <div className="producto">
