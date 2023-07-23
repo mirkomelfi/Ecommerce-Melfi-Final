@@ -100,10 +100,17 @@ export const updateProductsCart = async (req, res) => {
         const user = req.user//await currentUser(req)
         const products= await findProducts()
         const newCart=req.body
+        
+        if (! Array.isArray(newCart)){
+
+            return res.status(401).json({
+                message: "Se solicita array de objetos cuyos atributos sean: productId y quantity",
+            })
+        }
         const cart = await updateProductsCartSER(user.idCart,products,newCart)
         if (cart==-1){
-            res.status(400).json({
-                message: "No se realizaron cambios en el carrito. Fijese si los ID ingresados son validos",
+            res.status(401).json({
+                message: "No se realizaron cambios en el carrito. Fijese si los datos ingresados son validos (Se solicita array de objetos cuyos atributos sean: productId y quantity)",
             })
         }else{
             res.status(200).json({

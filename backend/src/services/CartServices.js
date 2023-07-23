@@ -140,7 +140,8 @@ export const updateProductsCartSER = async (idCart, productsExistentes, newCart)
     try {
 
         const productsToChange=[]
-        newCart.forEach(productCart=>{ // checkeo que el id que ingresa exista en mi listado de productos
+        newCart.forEach(productCart=>{
+            if (!productCart.productId||!productCart.quantity) return -1 // checkeo que el id que ingresa exista en mi listado de productos
             productsExistentes.forEach(product=>{
                if  (productCart.productId==product.id){
                 productsToChange.push(productCart) 
