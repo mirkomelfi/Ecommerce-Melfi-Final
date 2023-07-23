@@ -11,6 +11,9 @@ import ItemDetailContainer from './ItemDetailContainer/ItemDetailContainer'
 import { Mensaje } from './Mensaje/Mensaje';
 import Cart from './Cart/Cart';
 import { CreacionUser } from './CreacionUser/CreacionUser';
+import { UserPassword } from './UserPassword/UserPassword';
+import { ChangePass } from './UserPassword/ChangePass';
+
 
 export const App = () => {
   return (
@@ -25,9 +28,10 @@ export const App = () => {
           <Route path="/" element={<ItemListContainer greeting="¡Bienvenido al sitio web de la Escuela! ¡Esperamos contar con lo que está buscando!"/>}/>
           <Route path="/producto/:_id" element={<ItemDetailContainer />}/> 
           <Route path="/cart" element={<Cart />}/> 
-          <Route path="/finalizada" element={<Mensaje greeting= "compra finalizada"/>}/> 
-          <Route path="/rol" element={<Mensaje greeting= "Su rol no le permite acceso a esta ruta"/>}/> 
+          <Route path="/finalizada" element={<Mensaje msj= "compra finalizada"/>}/> 
           <Route path="/admin" element={<CreacionUser />}/> 
+          <Route path="/password"element={<UserPassword />}/> 
+          <Route path="/newpassword"element={<ChangePass />}/> 
           <Route path='*' element={<h1>404 Not Found</h1>} />
         </Routes>
         

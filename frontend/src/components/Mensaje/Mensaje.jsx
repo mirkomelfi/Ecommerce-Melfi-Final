@@ -1,10 +1,10 @@
 import React from "react";
 
-export const Mensaje = ({greeting}) =>{
+export const Mensaje = ({msj}) =>{
 
     return (
       <div>
-        <h1 className="greeting">{greeting}</h1>
+        <h1 className="msj">{msj}</h1>
       </div>
    
     );

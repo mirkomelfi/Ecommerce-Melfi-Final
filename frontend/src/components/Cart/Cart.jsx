@@ -10,6 +10,8 @@ const Cart = () =>{
     const [finalizada, setFinalizada] = useState(false);
     const [cart, setCart] = useState([]);
 
+    const [ticket, setTicket] = useState(null);
+
     const fetchCart = async () => {
         try {
             let url = "http://localhost:4000/api/carts/";
@@ -62,8 +64,8 @@ const Cart = () =>{
         return status
     }
 
-    const finalizarCompra = ()=>{
-        fetch(`http://localhost:4000/api/carts/`, {
+    const finalizarCompra = async()=>{
+        await fetch(`http://localhost:4000/api/carts/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -74,11 +76,8 @@ const Cart = () =>{
         .then(response => response.json())
         .then(data => {
         console.log(data)
+        setTicket(data.ticket_generado)
         setFinalizada(true)
-
-        //const items= data.products
-       
-
         })
         .catch(error => console.error(error))
     
@@ -90,15 +89,21 @@ const Cart = () =>{
             {cart&&(!finalizada?(cart.map(producto=>
                 <div key= {producto.productId._id} className="producto">
                     <h1>{producto.productId.title}</h1>
-                   
                     <p>{producto.quantity}</p>
- 
                     <button onClick={()=>removeItem(producto.productId._id)}>Quitar del carrito</button>
                 </div>
                 
-                )):<Navigate to="/finalizada" />)}
+                )):
 
-                 <button onClick={()=>finalizarCompra()}>finalizar Compra</button>
+                <div className="ticket">
+                    <h1>Codigo de ticket: {ticket.code}</h1>
+                    <p>Total: {ticket.amount}</p>
+
+                </div>
+
+                )}
+
+                {!finalizada&&<button onClick={()=>finalizarCompra()}>finalizar Compra</button>}
            
         </>
     );
