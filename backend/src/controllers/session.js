@@ -160,7 +160,7 @@ export const registerUser = async (req, res) => {
             const userBDD = await findUserByEmail(email)
             
             if (userBDD!=-1) {
-                res.status(401).send("Usuario ya registrado")
+                res.status(401).send({message:"Usuario ya registrado"} )
             } else {
                 const hashPassword = createHash(password)
 
@@ -180,14 +180,14 @@ export const registerUser = async (req, res) => {
                 const token = jwt.sign({ user: { id: newUser._id } }, process.env.JWT_SECRET,{ expiresIn: '3h' })
 
                 res.cookie('jwt', token, { httpOnly: true, maxAge: 3 * 60 * 60 * 1000 })
-                res.status(201).json({ token });
+                res.status(200).json({ token });
             }
 
         }else{
-            res.status(500).send(`Falta ingresar algun dato requerido`)
+            res.status(401).send({message:`Falta ingresar algun dato requerido`})
         }
     } catch (error) {
-        res.status(500).send(`Ocurrio un error en Registro User, ${error}`)
+        res.status(500).send({message:`Ocurrio un error en Registro User, ${error}`})
     }
 
 }
@@ -296,7 +296,7 @@ export const logoutUser = async (req, res, next) => {
         });
     } catch (error) {
         
-        res.status(400).json({
+        res.status(401).json({
             status: "error" 
         });
     }
