@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate} from "react-router-dom";
-
+import { Mensaje } from "../Mensaje/Mensaje";
 import { useState,useEffect } from "react";
 
 import "./Cart.css";
@@ -65,34 +65,36 @@ const Cart = () =>{
     }
 
     const finalizarCompra = async()=>{
-        await fetch(`http://localhost:4000/api/carts/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body:"",
-        credentials:"include"
-    })
-        .then(response => response.json())
-        .then(data => {
-        console.log(data)
-        setTicket(data.ticket_generado)
-        setFinalizada(true)
-        })
-        .catch(error => console.error(error))
-    
+        if (cart){
+            await fetch(`http://localhost:4000/api/carts/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body:"",
+            credentials:"include"
+            })
+            .then(response => response.json())
+            .then(data => {
+
+            setTicket(data.ticket_generado)
+            setFinalizada(true)
+            })
+            .catch(error => console.error(error))
+        }
     }
     
     return (
         <>
             <h3>Carrito</h3>
-            {cart&&(!finalizada?(cart.map(producto=>
+            {cart?(!finalizada?(cart.map(producto=>
+            <>
                 <div key= {producto.productId._id} className="producto">
                     <h1>{producto.productId.title}</h1>
                     <p>{producto.quantity}</p>
                     <button onClick={()=>removeItem(producto.productId._id)}>Quitar del carrito</button>
                 </div>
-                
+                <button onClick={()=>finalizarCompra()}>finalizar Compra</button> </>
                 )):
 
                 <div className="ticket">
@@ -101,9 +103,7 @@ const Cart = () =>{
 
                 </div>
 
-                )}
-
-                {!finalizada&&<button onClick={()=>finalizarCompra()}>finalizar Compra</button>}
+                ):<><Mensaje msj={"Carrito vacio"} /></>}
            
         </>
     );

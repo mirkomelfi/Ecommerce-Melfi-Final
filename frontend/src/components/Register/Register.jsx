@@ -1,31 +1,58 @@
 import { useRef } from "react"
+import { Mensaje } from "../Mensaje/Mensaje"
+import { useState } from "react"
+import { Link } from "react-router-dom"
 
 export const Register = () => {
 
+    const [mensaje,setMensaje]=useState(null)
     const datForm = useRef() //Crear una referencia para consultar los valoresa actuales del form
 
-    const consultarForm = (e) => {
+    const consultarForm = async(e) => {
         //Consultar los datos del formulario
         e.preventDefault()
 
         const datosFormulario = new FormData(datForm.current) //Pasar de HTML a Objeto Iterable
         const cliente = Object.fromEntries(datosFormulario) //Pasar de objeto iterable a objeto simple
-        console.log(cliente)
-        fetch('http://localhost:4000/api/session/register', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(cliente)
-        }).then(response => response.json())
-            .then(data => {
-                document.cookie = `jwt=${data.token};expires=${new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString()};path=/`
-                console.log(data.token)
+
+        if (!cliente.email||!cliente.password){
+
+            setMensaje("faltan datos")
+        }
+       
+        else{
+
+            const response= await fetch('http://localhost:4000/api/session/register', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cliente),
+                credentials: "include"
             })
-            .catch(error => console.error(error))
-        e.target.reset() //Reset form
+
+            const data = await response.json()
+            console.log(response.status)
+            console.log(data)
+                if(response.status == 200) {
+                    setMensaje("Cuenta creada. Fuiste loggeado automaticamente")
+        
+                } else {
+
+                    if (response.status==401){
+                        setMensaje(data.message)
+                    }
+
+                }
+                
+                
+            e.target.reset() //Reset form
+        }
     }
     return (
+        <div>
+            {!mensaje?(
+        <>
         <div className="container divForm" >
             <h3>Formulario de registro</h3>
             <form onSubmit={consultarForm} ref={datForm}>
@@ -51,7 +78,11 @@ export const Register = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary">Registrar</button>
-            </form>
+                </form>
+
+            </div>
+        </>):<><Mensaje msj={mensaje} /><Link to="/"><button>Ir a comprar</button></Link></>
+        }
         </div>
     )
 }

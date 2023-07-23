@@ -9,6 +9,7 @@ export const Login = () => {
     const[ error,setError]=useState(false)
     const [mensaje,setMensaje]=useState(null)
     const datForm = useRef()
+
     const consultarLoggeo=async()=>{
         const response= await fetch('http://localhost:4000/api/session/current', {
             method: "GET",
@@ -20,8 +21,8 @@ export const Login = () => {
         const data = await response.json()
         if (response.status==200)setLoggeado(true)
         if (response.status==401)setLoggeado(false)
-        console.log(response.status)
-        console.log(data.message)
+        
+
     }
 
     useEffect(() => { 
@@ -30,19 +31,17 @@ export const Login = () => {
 
 
     const desloggear=async()=>{
-        await fetch('http://localhost:4000/api/session/logout', {
+        const response= await  fetch('http://localhost:4000/api/session/logout', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials:"include"
         })
-        .then(response => console.log(response)/*response.json()*/)
-            .then(data => {
-                console.log(data)
-                setLoggeado(false)
-            })
-            .catch(error => console.error(error))
+        const data = await response.json()
+        if (response.status==200){setLoggeado(false)}
+        setMensaje(data.message)
+
     }
 
 
@@ -53,8 +52,8 @@ export const Login = () => {
         const cliente = Object.fromEntries(datosFormulario) //Pasar de objeto iterable a objeto simple
        
         if (!cliente.email||!cliente.password){
-        setError(true)
-        setMensaje("faltan datos")
+            setError(true)
+            setMensaje("faltan datos")
         }
        
         else{
@@ -68,7 +67,7 @@ export const Login = () => {
                 credentials: "include"
             })
             const data = await response.json()
-            console.log(response)
+
             if(response.status == 200) {
                 setError(false)
                 setLoggeado(true)
@@ -87,7 +86,7 @@ export const Login = () => {
     }
     
     return (
-        //<Mensaje msj={mensaje} />
+
         <div>
             {!error?(
         <>
