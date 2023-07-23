@@ -23,12 +23,16 @@ export const loginUser = async (req, res, next) => {
 
                 if (userBDD==-1) {
                     // UserBDD no encontrado en mi aplicacion
-                    return res.status(401).send("User no encontrado")
+                    return res.status(401).send({
+                        message: "Usuario no encontrado"
+                    })
                 }
 
                 if (!validatePassword(password, userBDD.password)) {
                     // Contraseña no es válida
-                    return res.status(401).send("Contraseña no valida")
+                    return res.status(401).send({
+                        message: "Contraseña no valida"
+                    })
                 }
 
                 // Ya que el usuario es valido, genero un nuevo token
@@ -39,7 +43,7 @@ export const loginUser = async (req, res, next) => {
 
                 return res.status(200).json({ token })
             } else {
-                console.log("Al parecer encontre el token")
+
                 const token = req.cookies.jwt;
                 jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
                     if (err) {
@@ -86,7 +90,7 @@ export const passwordRecovery= async (req,res) => {
             
             })
 
-            let url= "http://localhost:3000/auth/newPass"
+            let url= "http://localhost:4000/api/session/newPass"
 
             await transporter.sendMail({
                 from: 'Test Coder mirkomelfi123@gmail.com',
@@ -100,9 +104,13 @@ export const passwordRecovery= async (req,res) => {
                 attachments: []
             })
             res.cookie("cookie cookie","cookie password",{maxAge:60*60*1000,signed:true})
-            res.send("Email enviado")
+            return res.status(200).send({
+                message: "Email enviado"
+            })
         }else{
-            res.send("Email no existe en bdd")
+            return res.status(401).send({
+                message: "Email no existe en bdd"
+            })
         }
         
     } catch (error) {
@@ -114,7 +122,7 @@ export const createNewPassword= async (req,res) => {
     try {
         const { email, password } = req.body // ingresa su mail y su nueva contra 
         if (!email||!password){
-            return res.status(400).send("Campos ingresados invalidos")
+            return res.status(401).send({message:"Campos ingresados invalidos"})
         }
         const userBDD= await findUserByEmail(email)
         
@@ -123,18 +131,18 @@ export const createNewPassword= async (req,res) => {
             
             if (passwordCookie){ 
                 if (validatePassword(password, userBDD.password)) {
-                    return res.status(400).send("No puedes colocar la misma contraseña")
+                    return res.status(401).send({message:"No puedes colocar la misma contraseña"})
                 }else{
                     const hashPassword = createHash(password)
                     const userId= userBDD.id
                     await modifyUser(userId,hashPassword)
-                    return res.status(200).send("Contraseña restablecida correctamente")
+                    return res.status(200).send({message:"Contraseña restablecida correctamente"})
                 }
             }else{
-                res.status(400).send("Token expiro") // en realidad hay que hacer un redirect
+                res.status(401).send({message:"Token expiro"}) // en realidad hay que hacer un redirect
             }
         }else{
-            res.status(400).send("No tienes cuenta creada con este email")
+            res.status(401).send({message:"No tienes cuenta creada con este email"})
         }
 
 
