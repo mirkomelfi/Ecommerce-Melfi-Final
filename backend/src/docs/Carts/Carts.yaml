@@ -10,7 +10,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Cart" 
+                type: object
+                items:
+                  $ref: "#components/schemas/Cart" 
         "400":
           description: "Carrito no encontrado"
         "401":
@@ -27,7 +29,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Cart" 
+                type: object
+                items:
+                  $ref: "#components/schemas/Cart" 
         "400":
           description: "Error en la compra"
         "401":
@@ -163,4 +167,12 @@ components:
         quantity:
           type: Number
           description: "Cantidad del producto a agregar al carrito"
+      example:
+        products: [{
+          productId: ObjectId("13bb13bb12cc13bb13bb13bb"),
+          quantity: 14},
+          {
+          productId: ObjectId("13bb13bb12cc13bb13bb13bb"),
+          quantity: 14
+        }]
         

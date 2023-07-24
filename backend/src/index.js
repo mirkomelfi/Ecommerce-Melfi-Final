@@ -6,8 +6,11 @@ import router from './routes/index.js'
 import passport from 'passport'
 import initializePassport from './config/passport.js'
 import cors from 'cors'
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express'
 import errorHandler from "./services/errors/index.js"
 import { addLogger } from './utils/logger.js'
+import __dirname from './path.js'
 
 
 const whiteList = [process.env.DOMINIO_FRONT] //Rutas validas a mi servidor
@@ -48,8 +51,9 @@ app.use("/", router)
 //app.use(errorHandler)
 
 
-
 app.listen(4000, () => {
     console.log(`Server on port 4000`)
 })
+
+
 
