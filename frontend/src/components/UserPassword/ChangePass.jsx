@@ -19,7 +19,7 @@ export const ChangePass = () => {
        
         else{
 
-            const response =  await fetch('http://localhost:4000/api/session/newPass', {
+            const response =  await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/newPass`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

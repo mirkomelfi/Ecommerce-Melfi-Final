@@ -19,7 +19,7 @@ const ItemDetail = ({pid,listaProd})=>{
 
             const cantidadUpdated={quantity:contador}
                 
-            const response = await fetch(`http://localhost:4000/api/carts/product/${pid}`, {
+            const response = await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/carts/product/${pid}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",

@@ -11,7 +11,7 @@ export const Login = () => {
     const datForm = useRef()
 
     const consultarLoggeo=async()=>{
-        const response= await fetch('http://localhost:4000/api/session/current', {
+        const response= await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/current`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export const Login = () => {
 
 
     const desloggear=async()=>{
-        const response= await  fetch('http://localhost:4000/api/session/logout', {
+        const response= await  fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/logout`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export const Login = () => {
        
         else{
 
-            const response =  await fetch('http://localhost:4000/api/session/login', {
+            const response =  await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

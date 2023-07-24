@@ -12,7 +12,7 @@ const ItemDetailContainer = () =>{
     const [loading,setLoading]= useState(true);
 
     useEffect(() => { 
-        fetch(`http://localhost:4000/api/products/${_id}`, {
+        fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/products/${_id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"

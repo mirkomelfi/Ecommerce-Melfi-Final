@@ -22,7 +22,7 @@ export const Register = () => {
        
         else{
 
-            const response= await fetch('http://localhost:4000/api/session/register', {
+            const response= await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

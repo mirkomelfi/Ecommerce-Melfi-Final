@@ -19,7 +19,7 @@ console.log(emailll)
        
         else{
 
-            const response =  await fetch('http://localhost:4000/api/session/passwordRecovery', {
+            const response =  await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/session/passwordRecovery`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

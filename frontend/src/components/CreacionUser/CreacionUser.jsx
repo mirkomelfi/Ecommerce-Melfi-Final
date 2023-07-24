@@ -24,7 +24,7 @@ export const CreacionUser = () => {
         const userData = Object.fromEntries(datosFormulario) //Pasar de objeto iterable a objeto simple
 
         if (boton=="Visualizar"){
-            await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+            await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/users/${userData.id_user}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -48,7 +48,7 @@ export const CreacionUser = () => {
                 console.log("dato invalido")
             }else{
                 const modifiedRol= {rol:newRol}
-                await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+                await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/users/${userData.id_user}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -64,7 +64,7 @@ export const CreacionUser = () => {
         }
             
         if (boton=="Eliminar"){
-            await fetch(`http://localhost:4000/api/users/${userData.id_user}`, {
+            await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/users/${userData.id_user}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"

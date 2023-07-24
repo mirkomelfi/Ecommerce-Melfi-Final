@@ -14,7 +14,7 @@ const Cart = () =>{
 
     const fetchCart = async () => {
         try {
-            let url = "http://localhost:4000/api/carts/";
+            let url = `${process.env.REACT_APP_DOMINIO_BACK}/api/carts/`;
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -44,7 +44,7 @@ const Cart = () =>{
 
     const removeItem=async(id)=>{
         let status=0
-        await fetch(`http://localhost:4000/api/carts/product/${id}`, {
+        await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/carts/product/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const Cart = () =>{
 
     const finalizarCompra = async()=>{
         if (cart){
-            await fetch(`http://localhost:4000/api/carts/`, {
+            await fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/carts/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -88,14 +88,16 @@ const Cart = () =>{
         <>
             <h3>Carrito</h3>
             {cart?(!finalizada?(cart.map(producto=>
-            <>
+            
                 <div key= {producto.productId._id} className="producto">
                     <h1>{producto.productId.title}</h1>
                     <p>{producto.quantity}</p>
                     <button onClick={()=>removeItem(producto.productId._id)}>Quitar del carrito</button>
                 </div>
-                <button onClick={()=>finalizarCompra()}>finalizar Compra</button> </>
-                )):
+                
+                )
+                )
+                :
 
                 <div className="ticket">
                     <h1>Codigo de ticket: {ticket.code}</h1>
@@ -104,7 +106,9 @@ const Cart = () =>{
                 </div>
 
                 ):<><Mensaje msj={"Carrito vacio"} /></>}
-           
+            <>
+            {!finalizada&&<button onClick={()=>finalizarCompra()}>finalizar Compra</button>}
+            </>
         </>
     );
   } 

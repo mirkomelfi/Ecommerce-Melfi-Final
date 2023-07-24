@@ -12,7 +12,7 @@ export const ItemListContainer = ({greeting}) =>{
     const [loading,setLoading]= useState(true);
    // if (!category){
       useEffect(() => { 
-        fetch(`http://localhost:4000/api/products/`, {
+        fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/products/`, {
           method: "GET",
           headers: {
               "Content-Type": "application/json"
@@ -35,9 +35,9 @@ export const ItemListContainer = ({greeting}) =>{
    /* }
     else{
       useEffect(() => { 
-       // console.log(`ruta http://localhost:4000/api/products/category=${category}`)
-        fetch(`http://localhost:4000/api/products/?category=${category}`, {
-          //fetch(`http://localhost:4000/api/products`, {
+       // console.log(`${process.env.REACT_APP_DOMINIO_BACK}/api/products/category=${category}`)
+        fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/products/?category=${category}`, {
+          //fetch(`${process.env.REACT_APP_DOMINIO_BACK}/api/products`, {
           method: "GET",
           headers: {
               "Content-Type": "application/json"
