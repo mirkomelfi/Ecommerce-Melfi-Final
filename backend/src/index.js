@@ -10,7 +10,7 @@ import errorHandler from "./services/errors/index.js"
 import { addLogger } from './utils/logger.js'
 
 
-const whiteList = ['http://localhost:3000'] //Rutas validas a mi servidor
+const whiteList = [process.env.DOMINIO_FRONT] //Rutas validas a mi servidor
 
 const corsOptions = { //Reviso si el cliente que intenta ingresar a mi servidor esta o no en esta lista
     origin: (origin, callback) => {

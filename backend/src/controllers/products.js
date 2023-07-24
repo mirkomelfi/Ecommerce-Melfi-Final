@@ -86,7 +86,7 @@ export const deleteProduct = async (req, res) => {
                 message: "Producto eliminado"
             })
         }else{
-            res.status(200).json({
+            res.status(400).json({
                 message: "Producto no encontrado"
             })
         }
@@ -122,16 +122,14 @@ export const getProductById = async (req, res) => {
     try {
         const product = await findProductById(id)
         if (product!=-1){
-            if (!product.title||!product.description||!product.code||!product.price||!product.status||!product.stock||!product.category||!product.thumbnails){
-                req.logger.warning(`Faltan propiedades del producto: ${product}`)
-            }
-            res.status(200).send(product) 
+            return res.status(200).send({message:product}) 
         }else{
-            res.status(400).send("Producto no existente")
+            return res.status(400).send({message:"Producto no existente"})
         }
       
 
     } catch (error) {
+        console.log(error)
         res.status(500).send(error)
     }
 

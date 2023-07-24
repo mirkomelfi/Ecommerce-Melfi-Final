@@ -90,7 +90,7 @@ export const passwordRecovery= async (req,res) => {
             
             })
 
-            let url= "http://localhost:4000/api/session/newPass"
+            let url= `${process.env.DOMINIO_BACK}/api/session/newPass`
 
             await transporter.sendMail({
                 from: 'Test Coder mirkomelfi123@gmail.com',
