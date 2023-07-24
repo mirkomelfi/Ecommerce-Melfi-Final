@@ -70,6 +70,14 @@ describe("Testing de la aplicacion Ecommerce", () => {
                     expect(statusCode).to.be.ok.and.equal(401)
                 }
             })
+
+            it("Ruta: /api/session/logout con el metodo GET", async function () {
+                //.set() setear valores como si tratara de las cookies del navegador
+                const { _body,statusCode } = await requester.get('/api/session/logout').set('Cookie', [`${cookie.name}=${cookie.value}`])
+                let ok=false
+                if (statusCode==200||statusCode==401) ok=true
+                expect(ok).to.be.ok
+            })
     
     
         })
@@ -180,26 +188,100 @@ describe("Testing de la aplicacion Ecommerce", () => {
             const pid = "647ce94fd5b31ad0934c6604"
 
             const product= {
+                quantity: 1
+            }
+            
+            const { statusCode, _body } = await requester.post(`/api/carts/product/${pid}`).send(product).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
+
+        })
+
+        it("Ruta: /api/carts/product/{pid} con el metodo PUT", async function () {
+            //_body, StatusCode, Ok(true o false)
+            const pid = "647ce94fd5b31ad0934c6604"
+
+            const product= {
                 quantity: 888 
             }
             
-            const { statusCode, _body, ok } = await requester.post(`/api/carts/product/${pid}`).send(product).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
-            console.log(_body)
+            const { statusCode, _body } = await requester.put(`/api/carts/product/${pid}`).send(product).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
 
-            expect(_body).to.be.ok
+        })
+
+        it("Ruta: /api/carts/ con el metodo PUT", async function () {
+            //_body, StatusCode, Ok(true o false)
+
+            const arrayProducts= [
+                {
+                    productId: "",
+                    quantity: 8 
+                },
+                {
+                    productId: "",
+                    quantity: 4
+                }
+            ]
+            
+            const { statusCode, _body } = await requester.put(`/api/carts`).send(arrayProducts).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
+
         })
 
         //purchase
-/*
-        it("Ruta: /api/carts/{cid}/purchase con el metodo GET", async function () {
-            const cid = "649b44cc2370f6da248b243c"
-            const { statusCode, _body } = await requester.get(`/cart/${cid}/purchase`)
 
-            expect(statusCode).to.be.equal(200)
+        it("Ruta: /api/carts con el metodo POST", async function () {
+            const { statusCode, _body } = await requester.post(`/api/carts`).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
 
         })
 
-*/
+        it("Ruta: /api/carts/product/{pid} con el metodo DELETE", async function () {
+            //_body, StatusCode, Ok(true o false)
+            const pid = "647ce94fd5b31ad0934c6604"
+            
+            const { statusCode, _body } = await requester.delete(`/api/carts/product/${pid}`).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
+
+        })
+
+        it("Ruta: /api/carts con el metodo DELETE", async function () {
+            //_body, StatusCode, Ok(true o false)
+            
+            const { statusCode, _body } = await requester.delete(`/api/carts`).set('Cookie', [`${cookie.name}=${cookie.value}`]) //requester.metodo(concatenacion de rutas)
+            
+            let ok=false
+            if (statusCode===200||statusCode===400||statusCode===401){
+                ok=true
+            }
+            expect(ok).to.be.ok
+
+        })
+
     })
 
 

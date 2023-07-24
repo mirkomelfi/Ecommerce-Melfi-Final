@@ -153,8 +153,8 @@ export const finalizarCompra = async (req, res) => {
                 })
             }
         }else{
-            res.status(200).json({
-                message: "No se pudo realizar la compra, chequee si los productos agregados cuentan con stock suficiente",
+            res.status(400).json({
+                message: "No se pudo realizar la compra, chequee si agreggo productos al carrito o si los productos agregados cuentan con stock suficiente",
             })
         }
 
