@@ -1,5 +1,5 @@
 paths:
-  /product/:
+  /api/products/:
     get:
       summary: "Consulta todos los productos"
       tags:
@@ -15,7 +15,24 @@ paths:
                   $ref: "#components/schemas/Product"
         "500":
           description: "Error del servidor al obtener los productos"
-  /product/{pid}:
+    post:
+      summary: "Crear producto"
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createProduct"
+      responses:
+        "200":
+          description: "Producto creado"
+        "401":
+          description: "Error de roles"
+        "500":
+          description: "Error del servidor al agregar el producto"
+  /api/products/{pid}:
     get:  
       summary: "Consultar un producto dado su id"
       tags:
@@ -30,10 +47,12 @@ paths:
       responses:
         "200":
           description: "Producto encontrado"
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/Product"
+        "400":
+          description: "Error al intentar buscar"
+        "401":
+          description: "Error de loggeo/roles"
+        "500":
+        description: "Error de servidor"
     put:
       summary: "Actualizar un producto"
       tags:
@@ -54,6 +73,10 @@ paths:
       responses:
         "200":
           description: "Producto actualizado"
+        "400":
+          description: "Error al intentar actualizar"
+        "401":
+          description: "Error de loggeo/roles"
         "500":
           description: "Error del servidor al actualizar el producto"
     delete:
@@ -70,42 +93,12 @@ paths:
       responses:
         "200":
           description: "Producto eliminado"
+        "400":
+          description: "Error al intentar eliminar"
+        "401":
+          description: "Error de loggeo/roles"
         "500":
-          description: "Error del servidor al eliminar el producto"
-  /product/add:
-    post:
-      summary: "Agregar productos al carrito"
-      tags:
-        - Products
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#components/requestBodies/addProduct"
-      responses:
-        "200":
-          description: "Producto agregado"
-        "500":
-          description: "Error del servidor al agregar el producto"
-  /product/create:
-    post:
-      summary: "Crear un producto"
-      tags:
-        - Products
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#components/requestBodies/addProduct"
-      responses:
-        "200":
-          description: "Producto creado"
-        "500":
-          description: "Error del servidor al crear el producto"
-
-    
+          description: "Error del servidor al eliminar el producto"    
   
 
 
@@ -156,7 +149,7 @@ components:
         category: "Entretenimiento"
         thumbnails: ["libro1.jpg"]
   requestBodies:
-    addProduct:
+    createProduct:
       type: object
       properties:
         title:

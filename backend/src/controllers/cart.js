@@ -17,11 +17,11 @@ export const getCart= async (req, res) => {
                 })
 
             }else{
-                res.status(200).send("No encuentra el carrito")
+                res.status(400).send("No encuentra el carrito")
             }
            
         }else{
-            res.status(400).json({
+            res.status(401).json({
                 message: "No esta loggeado",
             }) 
         }
